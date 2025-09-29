@@ -13,19 +13,6 @@ import { Eye, EyeOff, Lock, Mail, User } from "lucide-react";
 import { Link } from "wouter";
 import CloneDriveLogo from "@/components/CloneDriveLogo";
 
-const signupSchema = z.object({
-  name: z.string().min(2),
-  email: z.string().email(),
-  password: z.string().min(6),
-  confirmPassword: z.string().min(6),
-  acceptTerms: z.boolean()
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Las contraseñas no coinciden",
-  path: ["confirmPassword"]
-});
-
-type SignupFormData = z.infer<typeof signupSchema>;
-
 interface SignupFormProps {
   onReplitLogin: () => void;
 }
@@ -36,19 +23,24 @@ export default function SignupForm({ onReplitLogin }: SignupFormProps) {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Create schema inside component to access translations
+  const signupSchema = z.object({
+    name: z.string().min(2, { message: t('validation.nameRequired') }),
+    email: z.string().email({ message: t('validation.invalidEmail') }),
+    password: z.string().min(6, { message: t('validation.passwordTooShort') }),
+    confirmPassword: z.string().min(6, { message: t('validation.passwordTooShort') }),
+    acceptTerms: z.boolean().refine(val => val === true, {
+      message: t('validation.acceptTermsRequired')
+    })
+  }).refine((data) => data.password === data.confirmPassword, {
+    message: t('validation.passwordsDoNotMatch'),
+    path: ["confirmPassword"]
+  });
+
+  type SignupFormData = z.infer<typeof signupSchema>;
+
   const form = useForm<SignupFormData>({
-    resolver: zodResolver(signupSchema.extend({
-      name: z.string().min(2, { message: t('validation.nameRequired') }),
-      email: z.string().email({ message: t('validation.invalidEmail') }),
-      password: z.string().min(6, { message: t('validation.passwordTooShort') }),
-      confirmPassword: z.string().min(6, { message: t('validation.passwordTooShort') }),
-      acceptTerms: z.boolean().refine(val => val === true, {
-        message: t('validation.acceptTermsRequired')
-      })
-    }).refine((data) => data.password === data.confirmPassword, {
-      message: t('validation.passwordsDoNotMatch'),
-      path: ["confirmPassword"]
-    })),
+    resolver: zodResolver(signupSchema),
     defaultValues: {
       name: "",
       email: "",

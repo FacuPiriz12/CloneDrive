@@ -12,13 +12,6 @@ import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { Link } from "wouter";
 import CloneDriveLogo from "@/components/CloneDriveLogo";
 
-const loginSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(6)
-});
-
-type LoginFormData = z.infer<typeof loginSchema>;
-
 interface LoginFormProps {
   onReplitLogin: () => void;
 }
@@ -28,11 +21,16 @@ export default function LoginForm({ onReplitLogin }: LoginFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Create schema inside component to access translations
+  const loginSchema = z.object({
+    email: z.string().email({ message: t('validation.invalidEmail') }),
+    password: z.string().min(6, { message: t('validation.passwordTooShort') })
+  });
+
+  type LoginFormData = z.infer<typeof loginSchema>;
+
   const form = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema.extend({
-      email: z.string().email({ message: t('validation.invalidEmail') }),
-      password: z.string().min(6, { message: t('validation.passwordTooShort') })
-    })),
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
       password: ""
