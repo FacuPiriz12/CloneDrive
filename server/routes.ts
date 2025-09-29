@@ -56,8 +56,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Supabase config endpoint for frontend
   app.get('/api/config/supabase', (req, res) => {
     res.json({
-      url: process.env.SUPABASE_URL,
-      anonKey: process.env.SUPABASE_ANON_KEY
+      url: process.env.SUPABASE_URL || '',
+      anonKey: process.env.SUPABASE_ANON_KEY || ''
+    });
+  });
+
+  // Temporary diagnostic endpoint
+  app.get('/api/debug/supabase', (req, res) => {
+    const supabaseKeys = Object.keys(process.env).filter(key => key.includes('SUPABASE'));
+    res.json({
+      supabaseUrl: {
+        exists: 'SUPABASE_URL' in process.env,
+        hasValue: !!process.env.SUPABASE_URL,
+        length: process.env.SUPABASE_URL?.length || 0,
+        value: process.env.SUPABASE_URL ? process.env.SUPABASE_URL.substring(0, 20) + '...' : 'undefined'
+      },
+      supabaseAnonKey: {
+        exists: 'SUPABASE_ANON_KEY' in process.env,
+        hasValue: !!process.env.SUPABASE_ANON_KEY,
+        length: process.env.SUPABASE_ANON_KEY?.length || 0,
+        value: process.env.SUPABASE_ANON_KEY ? process.env.SUPABASE_ANON_KEY.substring(0, 20) + '...' : 'undefined'
+      },
+      allSupabaseKeys: supabaseKeys,
+      nodeEnv: process.env.NODE_ENV
     });
   });
   
