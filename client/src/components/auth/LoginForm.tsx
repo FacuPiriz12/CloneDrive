@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { supabasePromise } from "@/lib/supabase";
+import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -37,15 +39,37 @@ export default function LoginForm({ onReplitLogin }: LoginFormProps) {
     }
   });
 
+  const { toast } = useToast();
+
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
     try {
-      // TODO: Implementar login con email/password cuando esté disponible
-      console.log('Login attempt:', data);
-      // Por ahora usar Replit Auth
-      onReplitLogin();
+      const supabase = await supabasePromise;
+      const { error } = await supabase.auth.signInWithPassword({
+        email: data.email,
+        password: data.password
+      });
+
+      if (error) {
+        toast({
+          title: t('errors.loginFailed'),
+          description: error.message,
+          variant: "destructive"
+        });
+        return;
+      }
+
+      toast({
+        title: t('login.success'),
+        description: t('login.welcomeBack')
+      });
     } catch (error) {
       console.error('Login error:', error);
+      toast({
+        title: t('errors.loginFailed'),
+        description: t('errors.tryAgain'),
+        variant: "destructive"
+      });
     } finally {
       setIsLoading(false);
     }
@@ -65,14 +89,15 @@ export default function LoginForm({ onReplitLogin }: LoginFormProps) {
         </CardHeader>
 
         <CardContent className="space-y-4">
-          {/* Replit Auth Button - Primary Option */}
+          {/* Replit Auth Button - Secondary Option */}
           <Button 
             onClick={onReplitLogin}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 shadow-lg hover:shadow-xl transition-all duration-300"
+            variant="outline"
+            className="w-full font-medium py-3 shadow-sm hover:shadow-md transition-all duration-300"
             data-testid="button-replit-login"
           >
-            <div className="w-5 h-5 bg-white rounded mr-2 flex items-center justify-center">
-              <span className="text-blue-600 text-xs font-bold">R</span>
+            <div className="w-5 h-5 bg-blue-600 rounded mr-2 flex items-center justify-center">
+              <span className="text-white text-xs font-bold">R</span>
             </div>
             {t('login.continueWithReplit')}
           </Button>

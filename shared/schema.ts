@@ -23,7 +23,7 @@ export const sessions = pgTable(
   (table) => [index("IDX_session_expire").on(table.expire)],
 );
 
-// User storage table - mandatory for Replit Auth
+// User storage table - compatible with both Replit Auth and Supabase Auth
 export const users = pgTable("users", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   email: varchar("email").unique(),
@@ -32,6 +32,8 @@ export const users = pgTable("users", {
   profileImageUrl: varchar("profile_image_url"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
+  // Authentication provider - 'replit' or 'supabase'
+  authProvider: varchar("auth_provider").notNull().default('replit'),
   // Google OAuth fields
   googleAccessToken: text("google_access_token"),
   googleRefreshToken: text("google_refresh_token"),

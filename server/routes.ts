@@ -53,6 +53,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Trust proxy for correct protocol/host detection behind load balancers
   app.set('trust proxy', 1);
   
+  // Supabase config endpoint for frontend
+  app.get('/api/config/supabase', (req, res) => {
+    res.json({
+      url: process.env.SUPABASE_URL,
+      anonKey: process.env.SUPABASE_ANON_KEY
+    });
+  });
+  
   // Auth middleware
   await setupAuth(app);
 

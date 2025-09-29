@@ -7,9 +7,23 @@ import type { Express, RequestHandler } from "express";
 import memoize from "memoizee";
 import connectPg from "connect-pg-simple";
 import { storage } from "./storage";
+import { createClient } from '@supabase/supabase-js';
 
 if (!process.env.REPLIT_DOMAINS) {
   throw new Error("Environment variable REPLIT_DOMAINS not provided");
+}
+
+// Create Supabase client for server-side auth
+function createSupabaseClient() {
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
+  
+  if (!supabaseUrl || !supabaseAnonKey) {
+    console.log('Supabase credentials not found, using Replit Auth only');
+    return null;
+  }
+  
+  return createClient(supabaseUrl, supabaseAnonKey);
 }
 
 const getOidcConfig = memoize(
@@ -180,6 +194,47 @@ export async function setupAuth(app: Express) {
 }
 
 export const isAuthenticated: RequestHandler = async (req, res, next) => {
+  // Check for Supabase auth first
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.substring(7);
+    const supabase = createSupabaseClient();
+    
+    if (supabase) {
+      try {
+        const { data: { user }, error } = await supabase.auth.getUser(token);
+        
+        if (user && !error) {
+          // Create user object compatible with existing code
+          req.user = {
+            claims: {
+              sub: user.id,
+              email: user.email || '',
+              first_name: user.user_metadata?.first_name || user.user_metadata?.name?.split(' ')[0] || '',
+              last_name: user.user_metadata?.last_name || user.user_metadata?.name?.split(' ').slice(1).join(' ') || ''
+            },
+            access_token: token,
+            expires_at: Math.floor(Date.now() / 1000) + 3600 // 1 hour from now
+          };
+          
+          // Upsert user in database with Supabase auth provider
+          await storage.upsertUser({
+            id: user.id,
+            email: user.email || '',
+            firstName: user.user_metadata?.first_name || user.user_metadata?.name?.split(' ')[0] || '',
+            lastName: user.user_metadata?.last_name || user.user_metadata?.name?.split(' ').slice(1).join(' ') || '',
+            profileImageUrl: user.user_metadata?.avatar_url || '',
+            authProvider: 'supabase'
+          });
+          
+          return next();
+        }
+      } catch (error) {
+        console.error('Supabase auth error:', error);
+      }
+    }
+  }
+  
   // In development, use session-based authentication
   if (process.env.NODE_ENV === "development") {
     // Check if user is logged in (default is logged out)

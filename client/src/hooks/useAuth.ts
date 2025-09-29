@@ -1,24 +1,134 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getQueryFn } from "@/lib/queryClient";
+import { supabasePromise } from "@/lib/supabase";
+import { useEffect, useState } from "react";
+
+type SupabaseUser = {
+  id: string;
+  email?: string;
+  user_metadata?: {
+    first_name?: string;
+    last_name?: string;
+    name?: string;
+    avatar_url?: string;
+  };
+};
 
 export function useAuth() {
-  const { data: user, isLoading, error, isError } = useQuery({
+  const [supabaseUser, setSupabaseUser] = useState<SupabaseUser | null>(null);
+  const [isSupabaseLoading, setIsSupabaseLoading] = useState(true);
+  const queryClient = useQueryClient();
+
+  // Initialize Supabase auth listener
+  useEffect(() => {
+    let mounted = true;
+    
+    const initSupabaseAuth = async () => {
+      try {
+        const supabase = await supabasePromise;
+        
+        // Get initial session
+        const { data: { session } } = await supabase.auth.getSession();
+        if (mounted) {
+          setSupabaseUser(session?.user || null);
+          setIsSupabaseLoading(false);
+        }
+        
+        // Listen for auth changes
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(
+          async (event, session) => {
+            if (mounted) {
+              setSupabaseUser(session?.user || null);
+              // Invalidate and refetch user data when auth state changes
+              queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+            }
+          }
+        );
+
+        return () => {
+          subscription.unsubscribe();
+        };
+      } catch (error) {
+        console.error('Error initializing Supabase auth:', error);
+        if (mounted) {
+          setIsSupabaseLoading(false);
+        }
+      }
+    };
+
+    initSupabaseAuth();
+    
+    return () => {
+      mounted = false;
+    };
+  }, [queryClient]);
+
+  // Query for backend user data
+  const { data: backendUser, isLoading: isBackendLoading, error, isError } = useQuery({
     queryKey: ["/api/auth/user"],
-    queryFn: getQueryFn({ on401: "returnNull" }), // Return null on 401 instead of throwing
+    queryFn: async () => {
+      // If we have a Supabase user, include the auth token
+      if (supabaseUser) {
+        const supabase = await supabasePromise;
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (session?.access_token) {
+          const response = await fetch("/api/auth/user", {
+            headers: {
+              'Authorization': `Bearer ${session.access_token}`
+            }
+          });
+          
+          if (!response.ok) {
+            if (response.status === 401) return null;
+            throw new Error('Failed to fetch user');
+          }
+          
+          return response.json();
+        }
+      }
+      
+      // Fallback to regular query function (for Replit auth or dev mode)
+      return getQueryFn({ on401: "returnNull" })();
+    },
     retry: false,
-    refetchOnWindowFocus: false, // Don't refetch on focus to avoid loops
-    staleTime: 1000, // 1 second stale time
-    refetchInterval: false, // Don't auto-refetch
+    refetchOnWindowFocus: false,
+    staleTime: 1000,
+    refetchInterval: false,
+    enabled: !isSupabaseLoading, // Only run when Supabase auth is initialized
   });
 
-  // User is authenticated ONLY if we have valid user data
-  // If we get null (from 401) or error, user is not authenticated
-  const isAuthenticated = !!user && !isError;
+  // Sign out mutation
+  const signOutMutation = useMutation({
+    mutationFn: async () => {
+      // Sign out from Supabase if user is using Supabase auth
+      if (supabaseUser) {
+        const supabase = await supabasePromise;
+        await supabase.auth.signOut();
+      } else {
+        // Sign out from Replit/dev auth
+        const response = await fetch('/api/logout', { method: 'POST' });
+        if (!response.ok) {
+          throw new Error('Failed to sign out');
+        }
+      }
+    },
+    onSuccess: () => {
+      queryClient.clear();
+      setSupabaseUser(null);
+    },
+  });
+
+  const isLoading = isSupabaseLoading || isBackendLoading;
+  const user = backendUser;
+  const isAuthenticated = !!(supabaseUser || (user && !isError));
   
   return {
     user,
     isLoading,
     isAuthenticated,
     error,
+    signOut: signOutMutation.mutate,
+    isSigningOut: signOutMutation.isPending,
   };
 }

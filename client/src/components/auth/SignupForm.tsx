@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { supabasePromise } from "@/lib/supabase";
+import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -50,15 +52,44 @@ export default function SignupForm({ onReplitLogin }: SignupFormProps) {
     }
   });
 
+  const { toast } = useToast();
+
   const onSubmit = async (data: SignupFormData) => {
     setIsLoading(true);
     try {
-      // TODO: Implementar signup con email/password cuando esté disponible
-      console.log('Signup attempt:', { ...data, password: '***', confirmPassword: '***' });
-      // Por ahora usar Replit Auth
-      onReplitLogin();
+      const supabase = await supabasePromise;
+      const { error } = await supabase.auth.signUp({
+        email: data.email,
+        password: data.password,
+        options: {
+          data: {
+            first_name: data.name.split(' ')[0],
+            last_name: data.name.split(' ').slice(1).join(' ') || '',
+            name: data.name
+          }
+        }
+      });
+
+      if (error) {
+        toast({
+          title: t('errors.signupFailed'),
+          description: error.message,
+          variant: "destructive"
+        });
+        return;
+      }
+
+      toast({
+        title: t('signup.success'),
+        description: t('signup.checkEmail')
+      });
     } catch (error) {
       console.error('Signup error:', error);
+      toast({
+        title: t('errors.signupFailed'),
+        description: t('errors.tryAgain'),
+        variant: "destructive"
+      });
     } finally {
       setIsLoading(false);
     }
@@ -78,14 +109,15 @@ export default function SignupForm({ onReplitLogin }: SignupFormProps) {
         </CardHeader>
 
         <CardContent className="space-y-4">
-          {/* Replit Auth Button - Primary Option */}
+          {/* Replit Auth Button - Secondary Option */}
           <Button 
             onClick={onReplitLogin}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 shadow-lg hover:shadow-xl transition-all duration-300"
+            variant="outline"
+            className="w-full font-medium py-3 shadow-sm hover:shadow-md transition-all duration-300"
             data-testid="button-replit-signup"
           >
-            <div className="w-5 h-5 bg-white rounded mr-2 flex items-center justify-center">
-              <span className="text-blue-600 text-xs font-bold">R</span>
+            <div className="w-5 h-5 bg-blue-600 rounded mr-2 flex items-center justify-center">
+              <span className="text-white text-xs font-bold">R</span>
             </div>
             {t('signup.continueWithReplit')}
           </Button>
