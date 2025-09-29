@@ -5,6 +5,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useAuth } from "@/hooks/useAuth";
 import Landing from "@/pages/Landing";
+import Login from "@/pages/Login";
+import Signup from "@/pages/Signup";
 import Home from "@/pages/Home";
 import Operations from "@/pages/Operations";
 import Integrations from "@/pages/Integrations";
@@ -32,6 +34,10 @@ function Router() {
 
   return (
     <Switch>
+      {/* Auth routes - available to all users */}
+      <Route path="/login" component={Login} />
+      <Route path="/signup" component={Signup} />
+      
       {!isAuthenticated || error ? (
         <Route path="/" component={Landing} />
       ) : (

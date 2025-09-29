@@ -4,14 +4,15 @@ import { Cloud, Copy, Shield, Zap } from "lucide-react";
 import CloneDriveLogo from "@/components/CloneDriveLogo";
 import Footer from "@/components/Footer";
 import { useTranslation } from "react-i18next";
+import { useLocation } from "wouter";
 
 export default function Landing() {
   const { t } = useTranslation(['landing', 'common']);
+  const [, setLocation] = useLocation();
   
   const handleLogin = () => {
-    // In development, use dev-login endpoint
-    const isDevelopment = import.meta.env.DEV;
-    window.location.href = isDevelopment ? "/api/dev-login" : "/api/login";
+    // Redirect to login page instead of direct authentication
+    setLocation("/login");
   };
 
   return (

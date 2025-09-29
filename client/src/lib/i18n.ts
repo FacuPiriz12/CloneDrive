@@ -240,7 +240,58 @@ const resources = {
     errors: {
       validation: {
         urlRequired: "URL requerida",
-        invalidUrl: "Por favor ingresa una URL válida de Google Drive"
+        invalidUrl: "Por favor ingresa una URL válida de Google Drive",
+        invalidEmail: "Por favor ingresa un email válido",
+        passwordTooShort: "La contraseña debe tener al menos 6 caracteres",
+        nameRequired: "El nombre es requerido",
+        acceptTermsRequired: "Debes aceptar los términos y condiciones",
+        passwordsDoNotMatch: "Las contraseñas no coinciden"
+      }
+    },
+    auth: {
+      login: {
+        title: "Iniciar Sesión",
+        subtitle: "Accede a tu cuenta de CloneDrive",
+        continueWithReplit: "Continuar con Replit",
+        orContinueWith: "o continúa con",
+        emailLabel: "Correo electrónico",
+        emailPlaceholder: "tu@email.com",
+        passwordLabel: "Contraseña",
+        passwordPlaceholder: "Tu contraseña",
+        signInButton: "Iniciar Sesión",
+        forgotPassword: "¿Olvidaste tu contraseña?",
+        noAccount: "¿No tienes una cuenta?",
+        signUp: "Regístrate"
+      },
+      signup: {
+        title: "Crear Cuenta",
+        subtitle: "Únete a CloneDrive y comienza a gestionar tus archivos",
+        continueWithReplit: "Registrarse con Replit",
+        orCreateAccountWith: "o crear cuenta con",
+        nameLabel: "Nombre completo",
+        namePlaceholder: "Tu nombre completo",
+        emailLabel: "Correo electrónico",
+        emailPlaceholder: "tu@email.com",
+        passwordLabel: "Contraseña",
+        passwordPlaceholder: "Mínimo 6 caracteres",
+        confirmPasswordLabel: "Confirmar contraseña",
+        confirmPasswordPlaceholder: "Confirma tu contraseña",
+        acceptTerms: {
+          part1: "Acepto los",
+          termsLink: "términos de servicio",
+          and: "y",
+          privacyLink: "política de privacidad"
+        },
+        createAccountButton: "Crear Cuenta",
+        hasAccount: "¿Ya tienes una cuenta?",
+        signIn: "Inicia sesión"
+      },
+      validation: {
+        invalidEmail: "Por favor ingresa un email válido",
+        passwordTooShort: "La contraseña debe tener al menos 6 caracteres",
+        nameRequired: "El nombre es requerido",
+        acceptTermsRequired: "Debes aceptar los términos y condiciones",
+        passwordsDoNotMatch: "Las contraseñas no coinciden"
       }
     }
   },
@@ -480,7 +531,58 @@ const resources = {
     errors: {
       validation: {
         urlRequired: "URL required",
-        invalidUrl: "Please enter a valid Google Drive URL"
+        invalidUrl: "Please enter a valid Google Drive URL",
+        invalidEmail: "Please enter a valid email",
+        passwordTooShort: "Password must be at least 6 characters",
+        nameRequired: "Name is required",
+        acceptTermsRequired: "You must accept the terms and conditions",
+        passwordsDoNotMatch: "Passwords do not match"
+      }
+    },
+    auth: {
+      login: {
+        title: "Sign In",
+        subtitle: "Access your CloneDrive account",
+        continueWithReplit: "Continue with Replit",
+        orContinueWith: "or continue with",
+        emailLabel: "Email address",
+        emailPlaceholder: "your@email.com",
+        passwordLabel: "Password",
+        passwordPlaceholder: "Your password",
+        signInButton: "Sign In",
+        forgotPassword: "Forgot your password?",
+        noAccount: "Don't have an account?",
+        signUp: "Sign up"
+      },
+      signup: {
+        title: "Create Account",
+        subtitle: "Join CloneDrive and start managing your files",
+        continueWithReplit: "Sign up with Replit",
+        orCreateAccountWith: "or create account with",
+        nameLabel: "Full name",
+        namePlaceholder: "Your full name",
+        emailLabel: "Email address",
+        emailPlaceholder: "your@email.com",
+        passwordLabel: "Password",
+        passwordPlaceholder: "At least 6 characters",
+        confirmPasswordLabel: "Confirm password",
+        confirmPasswordPlaceholder: "Confirm your password",
+        acceptTerms: {
+          part1: "I accept the",
+          termsLink: "terms of service",
+          and: "and",
+          privacyLink: "privacy policy"
+        },
+        createAccountButton: "Create Account",
+        hasAccount: "Already have an account?",
+        signIn: "Sign in"
+      },
+      validation: {
+        invalidEmail: "Please enter a valid email",
+        passwordTooShort: "Password must be at least 6 characters",
+        nameRequired: "Name is required",
+        acceptTermsRequired: "You must accept the terms and conditions",
+        passwordsDoNotMatch: "Passwords do not match"
       }
     }
   }
