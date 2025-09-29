@@ -63,7 +63,7 @@ export default function SignupForm({ onReplitLogin }: SignupFormProps) {
         email: data.email,
         password: data.password,
         options: {
-          emailRedirectTo: `${window.location.origin}/auth/confirm`,
+          emailRedirectTo: `${window.location.protocol}//${window.location.host}/auth/confirm`,
           data: {
             first_name: data.name.split(' ')[0],
             last_name: data.name.split(' ').slice(1).join(' ') || '',
