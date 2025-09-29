@@ -61,22 +61,6 @@ app.use((req, res, next) => {
   httpServer.listen(port, "0.0.0.0", () => {
     log(`serving on port ${port}`);
     
-    // Debug Supabase environment variables
-    console.log('\n🔍 SUPABASE ENVIRONMENT VARIABLES DEBUG:');
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    console.log('SUPABASE_URL:', process.env.SUPABASE_URL ? 'SET' : 'NOT SET');
-    console.log('SUPABASE_ANON_KEY:', process.env.SUPABASE_ANON_KEY ? 'SET' : 'NOT SET');
-    if (process.env.SUPABASE_URL) {
-      console.log('SUPABASE_URL length:', process.env.SUPABASE_URL.length);
-      console.log('SUPABASE_URL preview:', process.env.SUPABASE_URL.substring(0, 30) + '...');
-    }
-    if (process.env.SUPABASE_ANON_KEY) {
-      console.log('SUPABASE_ANON_KEY length:', process.env.SUPABASE_ANON_KEY.length);
-      console.log('SUPABASE_ANON_KEY preview:', process.env.SUPABASE_ANON_KEY.substring(0, 30) + '...');
-    }
-    const supabaseKeys = Object.keys(process.env).filter(key => key.includes('SUPABASE'));
-    console.log('All SUPABASE keys:', supabaseKeys);
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
     
     // Display OAuth redirect URIs for easy configuration
     const domain = process.env.REPLIT_DEV_DOMAIN || `localhost:${port}`;
