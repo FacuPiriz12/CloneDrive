@@ -12,7 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useTranslation } from "react-i18next";
 import { Eye, EyeOff, Lock, Mail, User } from "lucide-react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import CloneDriveLogo from "@/components/CloneDriveLogo";
 
 interface SignupFormProps {
@@ -21,6 +21,7 @@ interface SignupFormProps {
 
 export default function SignupForm({ onReplitLogin }: SignupFormProps) {
   const { t } = useTranslation(['auth', 'common']);
+  const [, setLocation] = useLocation();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -62,6 +63,7 @@ export default function SignupForm({ onReplitLogin }: SignupFormProps) {
         email: data.email,
         password: data.password,
         options: {
+          emailRedirectTo: `${window.location.origin}/auth/confirm`,
           data: {
             first_name: data.name.split(' ')[0],
             last_name: data.name.split(' ').slice(1).join(' ') || '',
@@ -83,6 +85,11 @@ export default function SignupForm({ onReplitLogin }: SignupFormProps) {
         title: t('signup.success'),
         description: t('signup.checkEmail')
       });
+      
+      // Redirect to success page
+      setTimeout(() => {
+        setLocation('/signup/success');
+      }, 1500);
     } catch (error) {
       console.error('Signup error:', error);
       toast({

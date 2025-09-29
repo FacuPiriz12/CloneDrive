@@ -7,6 +7,8 @@ import { useAuth } from "@/hooks/useAuth";
 import Landing from "@/pages/Landing";
 import Login from "@/pages/Login";
 import Signup from "@/pages/Signup";
+import SignupSuccess from "@/pages/SignupSuccess";
+import EmailConfirmation from "@/pages/EmailConfirmation";
 import Home from "@/pages/Home";
 import Operations from "@/pages/Operations";
 import Integrations from "@/pages/Integrations";
@@ -37,6 +39,8 @@ function Router() {
       {/* Auth routes - available to all users */}
       <Route path="/login" component={Login} />
       <Route path="/signup" component={Signup} />
+      <Route path="/signup/success" component={SignupSuccess} />
+      <Route path="/auth/confirm" component={EmailConfirmation} />
       
       {!isAuthenticated || error ? (
         <Route path="/" component={Landing} />
