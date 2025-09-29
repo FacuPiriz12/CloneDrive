@@ -1,4 +1,5 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
+import { supabasePromise } from "./supabase";
 
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
@@ -7,14 +8,36 @@ async function throwIfResNotOk(res: Response) {
   }
 }
 
+// Helper function to get auth headers for both Supabase and Replit auth
+async function getAuthHeaders(): Promise<HeadersInit> {
+  const headers: HeadersInit = {};
+  
+  try {
+    const supabase = await supabasePromise;
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    if (session?.access_token) {
+      headers['Authorization'] = `Bearer ${session.access_token}`;
+    }
+  } catch (error) {
+    // Supabase auth not available or failed, will rely on cookies
+    console.debug('Supabase auth not available, using cookie auth');
+  }
+  
+  return headers;
+}
+
 export async function apiRequest(
   method: string,
   url: string,
   data?: unknown | undefined,
 ): Promise<Response> {
+  const authHeaders = await getAuthHeaders();
+  const contentHeaders = data ? { "Content-Type": "application/json" } : {};
+  
   const res = await fetch(url, {
     method,
-    headers: data ? { "Content-Type": "application/json" } : {},
+    headers: { ...contentHeaders, ...authHeaders },
     body: data ? JSON.stringify(data) : undefined,
     credentials: "include",
   });
@@ -31,7 +54,10 @@ export const getQueryFn: <T>(options: {
   async ({ queryKey }) => {
     // Only use the first element as the URL, ignore additional parameters
     const url = queryKey[0] as string;
+    const authHeaders = await getAuthHeaders();
+    
     const res = await fetch(url, {
+      headers: authHeaders,
       credentials: "include",
     });
 

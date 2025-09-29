@@ -42,7 +42,7 @@ export function getSession() {
   let sessionStore;
   
   // Use PostgreSQL store when DATABASE_URL is available (even in development)
-  if (process.env.DATABASE_URL) {
+  if (process.env.DATABASE_URL && process.env.DATABASE_URL.trim() !== '') {
     console.log('Using PostgreSQL session store');
     const pgStore = connectPg(session);
     sessionStore = new pgStore({
@@ -53,6 +53,7 @@ export function getSession() {
     });
   } else {
     console.log('Using memory session store - sessions will be lost on server restart');
+    console.log('Note: For persistent sessions with Supabase auth, DATABASE_URL is recommended but not required');
     // Memory store - sessions will be lost on server restart
     sessionStore = undefined; // Express session will use memory store by default
   }
