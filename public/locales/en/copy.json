@@ -1,0 +1,46 @@
+{
+  "quickCopy": {
+    "title": "Quick Copy",
+    "urlLabel": "Shared Drive URL",
+    "urlPlaceholder": "https://drive.google.com/drive/folders/...",
+    "destinationLabel": "Destination folder",
+    "includeSubfolders": "Include subfolders",
+    "preview": "Preview",
+    "starting": "Starting..."
+  },
+  "preview": {
+    "title": "Copy Preview",
+    "analyzing": "Analyzing files and folders...",
+    "generalInfo": "General information",
+    "fileTypes": "File types",
+    "destination": "Copy destination",
+    "destinationMessage": "Files will be copied to this folder",
+    "confirmCopy": "Confirm and Copy",
+    "initiating": "Starting copy...",
+    "statistics": {
+      "files": "Files",
+      "folders": "Folders",
+      "totalSize": "Total Size", 
+      "estimatedTime": "Estimated Time"
+    },
+    "warnings": {
+      "title": "Important information",
+      "personalDrive": "Files will be copied to your personal Google Drive",
+      "estimatedTime": "Estimated time may vary depending on size and connection",
+      "emailNotification": "You will receive an email notification when completed",
+      "largeSize": "Large copy - may take considerable time"
+    }
+  },
+  "folderBrowser": {
+    "title": "Select Destination Folder",
+    "loading": "Loading folders...",
+    "noFolders": "No subfolders in this location", 
+    "selectCurrent": "Select this folder",
+    "goBack": "Go back",
+    "myDrive": "My Drive"
+  },
+  "operations": {
+    "started": "Copy started",
+    "startedMessage": "The copy operation has begun. You can view progress in the sidebar."
+  }
+}

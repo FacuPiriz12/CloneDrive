@@ -1,0 +1,46 @@
+{
+  "quickCopy": {
+    "title": "Copia Rápida",
+    "urlLabel": "URL del Drive Compartido",
+    "urlPlaceholder": "https://drive.google.com/drive/folders/...",
+    "destinationLabel": "Carpeta de destino",
+    "includeSubfolders": "Incluir subcarpetas",
+    "preview": "Ver Vista Previa",
+    "starting": "Iniciando..."
+  },
+  "preview": {
+    "title": "Vista Previa de Copia",
+    "analyzing": "Analizando archivos y carpetas...",
+    "generalInfo": "Información general",
+    "fileTypes": "Tipos de archivos",
+    "destination": "Destino de copia",
+    "destinationMessage": "Los archivos se copiarán a esta carpeta",
+    "confirmCopy": "Confirmar y Copiar",
+    "initiating": "Iniciando copia...",
+    "statistics": {
+      "files": "Archivos",
+      "folders": "Carpetas", 
+      "totalSize": "Tamaño Total",
+      "estimatedTime": "Tiempo Estimado"
+    },
+    "warnings": {
+      "title": "Información importante",
+      "personalDrive": "Los archivos se copiarán a tu Google Drive personal",
+      "estimatedTime": "El tiempo estimado puede variar según el tamaño y la conexión",
+      "emailNotification": "Recibirás una notificación por email al completarse",
+      "largeSize": "Copia de gran tamaño - puede tomar tiempo considerable"
+    }
+  },
+  "folderBrowser": {
+    "title": "Seleccionar Carpeta de Destino",
+    "loading": "Cargando carpetas...",
+    "noFolders": "No hay subcarpetas en esta ubicación",
+    "selectCurrent": "Seleccionar esta carpeta",
+    "goBack": "Volver",
+    "myDrive": "Mi Drive"
+  },
+  "operations": {
+    "started": "Copia iniciada",
+    "startedMessage": "La operación de copia ha comenzado. Puedes ver el progreso en la barra lateral."
+  }
+}

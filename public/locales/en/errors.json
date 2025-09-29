@@ -1,0 +1,23 @@
+{
+  "auth": {
+    "unauthorized": "Unauthorized",
+    "loginRedirect": "Logging in again...",
+    "sessionExpired": "Session expired"
+  },
+  "validation": {
+    "urlRequired": "URL required",
+    "invalidUrl": "Please enter a valid Google Drive URL",
+    "fieldRequired": "This field is required"
+  },
+  "api": {
+    "copyFailed": "Could not start copy operation. Check the Drive URL.",
+    "loadFolders": "Error loading folders",
+    "loadPreview": "Error getting preview",
+    "networkError": "Network error",
+    "unknownError": "Unknown error"
+  },
+  "folders": {
+    "loadError": "Error loading folders",
+    "pathError": "Error getting folder path"
+  }
+}

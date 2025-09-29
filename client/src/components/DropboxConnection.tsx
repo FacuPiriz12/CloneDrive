@@ -1,0 +1,303 @@
+import { useEffect } from "react";
+import { useDropboxAuth } from "@/hooks/useDropboxAuth";
+import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { 
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { 
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { 
+  CheckCircle, 
+  XCircle, 
+  AlertTriangle,
+  Loader2
+} from "lucide-react";
+import DropboxLogo from "@/components/DropboxLogo";
+
+interface DropboxConnectionProps {
+  variant?: 'header' | 'card' | 'inline' | 'sidebar';
+}
+
+export default function DropboxConnection({ variant = 'header' }: DropboxConnectionProps) {
+  const { 
+    isConnected, 
+    hasValidToken, 
+    connect, 
+    disconnect, 
+    isConnecting, 
+    isDisconnecting,
+    isLoadingStatus,
+    checkOAuthCallback 
+  } = useDropboxAuth();
+  const { toast } = useToast();
+
+  // Check for OAuth callback results
+  useEffect(() => {
+    const result = checkOAuthCallback();
+    if (result?.success) {
+      toast({
+        title: "¡Conectado exitosamente!",
+        description: "Tu cuenta de Dropbox ha sido conectada.",
+      });
+    } else if (result?.error) {
+      toast({
+        title: "Error de conexión",
+        description: "No se pudo conectar tu cuenta de Dropbox. Intenta de nuevo.",
+        variant: "destructive",
+      });
+    }
+  }, [checkOAuthCallback, toast]);
+
+  const handleConnect = () => {
+    connect();
+  };
+
+  const handleDisconnect = () => {
+    disconnect();
+    toast({
+      title: "Cuenta desconectada",
+      description: "Tu cuenta de Dropbox ha sido desconectada.",
+    });
+  };
+
+  // Header variant - compact status indicator
+  if (variant === 'header') {
+    if (isLoadingStatus) {
+      return (
+        <div className="flex items-center gap-2" data-testid="dropbox-loading">
+          <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+        </div>
+      );
+    }
+
+    return (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={(isConnected && hasValidToken) ? undefined : handleConnect}
+              disabled={isConnecting || isDisconnecting}
+              className="flex items-center gap-2 h-8 px-2"
+              data-testid="dropbox-status"
+            >
+              <DropboxLogo className="w-4 h-4" />
+              {isConnected ? (
+                hasValidToken ? (
+                  <CheckCircle className="w-4 h-4 text-green-500" />
+                ) : (
+                  <AlertTriangle className="w-4 h-4 text-orange-500" />
+                )
+              ) : (
+                <XCircle className="w-4 h-4 text-red-500" />
+              )}
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            {isConnected ? (
+              hasValidToken ? "Dropbox conectado" : "Token expirado - reconectar necesario"
+            ) : (
+              "Conectar Dropbox"
+            )}
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    );
+  }
+
+  // Card variant - full connection management
+  if (variant === 'card') {
+    return (
+      <div className="p-4 border rounded-lg bg-white dark:bg-gray-950" data-testid="dropbox-card">
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-2">
+            <DropboxLogo className="w-5 h-5" />
+            <span className="font-medium">Dropbox</span>
+          </div>
+          {isConnected ? (
+            hasValidToken ? (
+              <Badge variant="default" className="bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300">
+                <CheckCircle className="w-3 h-3 mr-1" />
+                Conectado
+              </Badge>
+            ) : (
+              <Badge variant="destructive">
+                <AlertTriangle className="w-3 h-3 mr-1" />
+                Token expirado
+              </Badge>
+            )
+          ) : (
+            <Badge variant="secondary">
+              <XCircle className="w-3 h-3 mr-1" />
+              Desconectado
+            </Badge>
+          )}
+        </div>
+        
+        <p className="text-sm text-muted-foreground mb-4">
+          {isConnected 
+            ? "Tu cuenta de Dropbox está conectada. Puedes copiar archivos desde y hacia tu Dropbox."
+            : "Conecta tu cuenta de Dropbox para poder copiar archivos."
+          }
+        </p>
+
+        <div className="flex gap-2">
+          {isConnected ? (
+            <>
+              {!hasValidToken && (
+                <Button
+                  onClick={handleConnect}
+                  disabled={isConnecting}
+                  size="sm"
+                  data-testid="button-reconnect-dropbox"
+                >
+                  {isConnecting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                  Reconectar
+                </Button>
+              )}
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={isDisconnecting}
+                    data-testid="button-disconnect-dropbox"
+                  >
+                    {isDisconnecting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                    Desconectar
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>¿Desconectar Dropbox?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Esto eliminará el acceso a tu cuenta de Dropbox. No podrás copiar archivos hasta que vuelvas a conectar tu cuenta.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDisconnect} data-testid="confirm-disconnect-dropbox">
+                      Desconectar
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </>
+          ) : (
+            <Button
+              onClick={handleConnect}
+              disabled={isConnecting}
+              size="sm"
+              className="bg-blue-600 hover:bg-blue-700"
+              data-testid="button-connect-dropbox"
+            >
+              {isConnecting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              Conectar Dropbox
+            </Button>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // Sidebar variant - compact with full status info
+  if (variant === 'sidebar') {
+    if (isLoadingStatus) {
+      return (
+        <div className="flex items-center gap-2 p-2 rounded-md bg-muted/20" data-testid="dropbox-sidebar-loading">
+          <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+          <span className="text-xs text-muted-foreground">Verificando...</span>
+        </div>
+      );
+    }
+
+    return (
+      <div className="flex items-center justify-between p-2 rounded-md bg-muted/20 hover:bg-muted/30 transition-colors" data-testid="dropbox-sidebar">
+        <div className="flex items-center gap-2 min-w-0 flex-1">
+          <Folder className="w-4 h-4 flex-shrink-0 text-blue-600" />
+          <div className="min-w-0 flex-1">
+            <div className="text-xs font-medium truncate">Dropbox</div>
+            <div className="text-xs text-muted-foreground">
+              {isConnected ? (
+                hasValidToken ? (
+                  <span className="text-green-600">Conectado</span>
+                ) : (
+                  <span className="text-orange-600">Token expirado</span>
+                )
+              ) : (
+                <span className="text-muted-foreground">Desconectado</span>
+              )}
+            </div>
+          </div>
+        </div>
+        {isConnected ? (
+          <div className="flex items-center gap-1">
+            {hasValidToken ? (
+              <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
+            ) : (
+              <Button
+                onClick={handleConnect}
+                variant="ghost"
+                size="sm"
+                className="h-6 px-2 text-xs"
+                disabled={isConnecting}
+                data-testid="button-reconnect-dropbox-sidebar"
+              >
+                {isConnecting ? <Loader2 className="w-3 h-3 animate-spin" /> : "Reconectar"}
+              </Button>
+            )}
+          </div>
+        ) : (
+          <Button
+            onClick={handleConnect}
+            variant="ghost"
+            size="sm"
+            className="h-6 px-2 text-xs"
+            disabled={isConnecting}
+            data-testid="button-connect-dropbox-sidebar"
+          >
+            {isConnecting ? <Loader2 className="w-3 h-3 animate-spin" /> : "Conectar"}
+          </Button>
+        )}
+      </div>
+    );
+  }
+
+  // Inline variant - simple button
+  return (
+    <Button
+      onClick={isConnected ? undefined : handleConnect}
+      disabled={isConnecting || isDisconnecting}
+      variant={isConnected ? "default" : "outline"}
+      size="sm"
+      className="flex items-center gap-2"
+      data-testid="button-dropbox-inline"
+    >
+      {(isConnecting || isDisconnecting) && <Loader2 className="w-4 h-4 animate-spin" />}
+      <Folder className="w-4 h-4" />
+      {isConnected ? "Dropbox Conectado" : "Conectar Dropbox"}
+      {isConnected && (
+        hasValidToken ? (
+          <CheckCircle className="w-4 h-4 text-green-500" />
+        ) : (
+          <AlertTriangle className="w-4 h-4 text-orange-500" />
+        )
+      )}
+    </Button>
+  );
+}

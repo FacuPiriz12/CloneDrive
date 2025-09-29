@@ -1,0 +1,46 @@
+Propósito del Sistema de Gestión de Usuarios y Límites
+El sistema de gestión de usuarios y límites que te propuse implementar sirve para varios propósitos críticos en tu evolución hacia un SaaS:
+
+🔐 1. Control de Recursos y Prevención de Abusos
+Evita el uso excesivo de recursos por parte de un solo usuario
+
+Protege tu infraestructura de operaciones masivas que podrían saturar el sistema
+
+Garantiza equidad en el acceso a los recursos para todos los usuarios
+
+💰 2. Base para Futuro Sistema de Suscripciones
+Prepara la estructura para cuando definas tus planes (free, premium, enterprise)
+
+Permite experimentar con diferentes límites antes de monetizar
+
+Recolecta datos sobre el uso real para definir planes adecuados
+
+📊 3. Monitoreo y Analytics
+Tracking de uso: Sabrás exactamente cómo usan tu aplicación los usuarios
+
+Toma de decisiones basada en datos: Podrás ajustar límites según el comportamiento real
+
+Identificación de features populares: Verás qué funcionalidades usan más
+
+🚀 4. Mejora de la Experiencia de Usuario
+Feedback claro: Los usuarios sabrán sus límites actuales
+
+Transparencia: Entenderán qué reciben en cada nivel
+
+Upgrades intuitivos: La transición entre planes será más suave
+
+⚙️ 5. Gestión Administrativa
+Panel de control: Podrás gestionar usuarios y ajustar límites manualmente
+
+Solución de problemas: Identificarás usuarios con problemas rápidamente
+
+Moderación: Tendrás herramientas para gestionar malos usos
+
+🔮 6. Escalabilidad Futura
+Infraestructura preparada: Cuando crezcas, ya tendrás el sistema de límites implementado
+
+Adaptabilidad: Podrás cambiar límites fácilmente sin reescribir código
+
+Automatización: El sistema se auto-gestiona (reseteo diario de contadores, etc.)
+
+En resumen: Este sistema convierte tu aplicación de un "proyecto funcional" a un "producto escalable" con visión de negocio, sentando las bases para tu modelo de suscripciones mientras mejoras la gestión técnica y la experiencia de usuario actual.

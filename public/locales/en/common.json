@@ -1,0 +1,36 @@
+{
+  "app": {
+    "title": "Clone Drive",
+    "description": "Google Drive file management"
+  },
+  "navigation": {
+    "home": "Home",
+    "files": "Files", 
+    "operations": "Operations"
+  },
+  "language": {
+    "select": "Select language",
+    "spanish": "Español",
+    "english": "English",
+    "auto": "Automatic"
+  },
+  "buttons": {
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "close": "Close",
+    "retry": "Retry",
+    "back": "Back",
+    "next": "Next",
+    "change": "Change",
+    "select": "Select"
+  },
+  "status": {
+    "loading": "Loading...",
+    "success": "Success",
+    "error": "Error",
+    "completed": "Completed",
+    "pending": "Pending",
+    "inProgress": "In progress"
+  }
+}

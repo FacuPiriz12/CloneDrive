@@ -1,0 +1,95 @@
+1. Problema con las cookies/sesiones
+javascript
+// Asegúrate de tener esta configuración en Express
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production', // true en producción
+    sameSite: 'lax',
+    maxAge: 24 * 60 * 60 * 1000 // 24 horas
+  }
+}));
+2. Ruta de logout incorrecta
+javascript
+// Ruta para cerrar sesión - DEBE ser POST (no GET)
+app.post('/logout', (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.error('Error al cerrar sesión:', err);
+      return res.status(500).send('Error al cerrar sesión');
+    }
+    
+    // Limpiar cookie de sesión
+    res.clearCookie('connect.sid');
+    
+    // Redirigir a landing page
+    res.redirect('/');
+  });
+});
+3. Frontend - JavaScript para logout
+javascript
+// En tu frontend, asegúrate de que el logout use POST
+async function logout() {
+  try {
+    const response = await fetch('/logout', {
+      method: 'POST',
+      credentials: 'include' // Importante para incluir cookies
+    });
+    
+    if (response.redirected) {
+      window.location.href = response.url;
+    }
+  } catch (error) {
+    console.error('Error al cerrar sesión:', error);
+  }
+}
+4. Problemas con CORS en Replit
+javascript
+// Configuración de CORS para Replit
+const cors = require('cors');
+
+app.use(cors({
+  origin: [
+    'https://tu-replit-url.repl.co',
+    'https://tu-replit-url.repl.co'
+  ],
+  credentials: true // Permitir cookies entre dominios
+}));
+5. Verificar variables de entorno en Replit
+Asegúrate de que en los "Secrets" de Replit tengas:
+
+SESSION_SECRET con una clave segura
+
+NODE_ENV establecido como production
+
+Para debuggear:
+Agrega estos logs temporales:
+javascript
+// En tu ruta de logout
+app.post('/logout', (req, res) => {
+  console.log('Solicitud de logout recibida');
+  console.log('Session ID:', req.sessionID);
+  
+  req.session.destroy((err) => {
+    if (err) {
+      console.error('Error al destruir sesión:', err);
+      return res.status(500).json({ error: 'No se pudo cerrar sesión' });
+    }
+    
+    console.log('Sesión destruida exitosamente');
+    res.clearCookie('connect.sid');
+    res.redirect('/');
+  });
+});
+Verifica el estado de la sesión:
+javascript
+// Ruta para verificar el estado de la sesión
+app.get('/session-status', (req, res) => {
+  res.json({
+    isAuthenticated: !!req.session.user,
+    sessionId: req.sessionID,
+    user: req.session.user
+  });
+});

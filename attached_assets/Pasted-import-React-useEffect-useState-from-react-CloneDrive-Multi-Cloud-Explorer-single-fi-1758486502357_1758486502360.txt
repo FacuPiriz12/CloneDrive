@@ -1,0 +1,275 @@
+import React, { useEffect, useState } from "react";
+
+// CloneDrive Multi-Cloud Explorer (single-file React component)
+// - Uses Tailwind for styling (assumes Tailwind configured)
+// - Drop-in screen for your dashboard where connected clouds are browsed
+// - Includes membership gating, preview panel, transfer modal and history
+// - Replace API placeholders (/api/...) with your backend endpoints
+
+export default function CloudExplorer({ user = { name: 'Demo user' }, membership = 'free' }) {
+  // membership: 'free' | 'pro' | 'enterprise'
+  const [accounts, setAccounts] = useState([]); // connected accounts
+  const [selectedAccount, setSelectedAccount] = useState(null);
+  const [tree, setTree] = useState([]); // file/folder listing for selectedAccount root
+  const [selectedNode, setSelectedNode] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [transferOpen, setTransferOpen] = useState(false);
+  const [destAccount, setDestAccount] = useState(null);
+  const [transferOptions, setTransferOptions] = useState({ dedupe: true, preserveTimestamps: true, convertGoogleDocs: 'docx' });
+  const [jobs, setJobs] = useState([]); // recent transfer jobs
+  const [search, setSearch] = useState('');
+
+  useEffect(() => {
+    // load connected accounts (replace with real API)
+    async function loadAccounts() {
+      // placeholder sample accounts
+      const demo = [
+        { id: 'gdrive-1', provider: 'gdrive', name: 'Google Drive — Personal', connected: true },
+        { id: 'dropbox-1', provider: 'dropbox', name: 'Dropbox — Work', connected: true }
+      ];
+      setAccounts(demo);
+      setSelectedAccount(demo[0]);
+    }
+    loadAccounts();
+  }, []);
+
+  useEffect(() => {
+    if (!selectedAccount) return;
+    fetchListing(selectedAccount.id, '');
+  }, [selectedAccount]);
+
+  async function fetchListing(accountId, path) {
+    setLoading(true);
+    try {
+      // call your backend: GET /api/accounts/:id/list?path=/...
+      // mocked response:
+      await new Promise((r) => setTimeout(r, 300));
+      const sampleTree = [
+        { id: 'f1', name: 'Project X', mimeType: 'folder', path: '/Project X' },
+        { id: 'f2', name: 'Photos', mimeType: 'folder', path: '/Photos' },
+        { id: 'f3', name: 'Notes.docx', mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', size: 12345, path: '/Notes.docx' },
+      ];
+      setTree(sampleTree);
+      setLoading(false);
+    } catch (e) {
+      setLoading(false);
+      console.error(e);
+    }
+  }
+
+  function onSelectNode(node) {
+    setSelectedNode(node);
+  }
+
+  function openTransferModal() {
+    if (!selectedNode) return alert('Seleccione una carpeta o archivo para transferir');
+    setDestAccount(accounts.find(a => a.id !== selectedAccount.id) || null);
+    setTransferOpen(true);
+  }
+
+  async function startTransfer() {
+    if (membership === 'free') {
+      alert('Esta función requiere una suscripción PRO. Por favor actualice su plan.');
+      return;
+    }
+    // Encolar job en backend -> /api/transfer (POST)
+    const payload = {
+      sourceAccountId: selectedAccount.id,
+      sourcePath: selectedNode.path,
+      destAccountId: destAccount.id,
+      options: transferOptions
+    };
+
+    // simulate job creation
+    const job = {
+      id: `job-${Date.now()}`,
+      name: `${selectedNode.name} → ${destAccount ? destAccount.name : 'Sin destino'}`,
+      status: 'queued',
+      startedAt: new Date().toISOString(),
+      progress: 0
+    };
+    setJobs(prev => [job, ...prev]);
+    setTransferOpen(false);
+
+    // fake progress
+    simulateJobProgress(job.id);
+
+    try {
+      // real call example:
+      // const res = await fetch('/api/transfer', { method: 'POST', body: JSON.stringify(payload) })
+      // const data = await res.json();
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  function simulateJobProgress(jobId) {
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += Math.random() * 20;
+      if (progress >= 100) progress = 100;
+      setJobs(prev => prev.map(j => j.id === jobId ? { ...j, progress, status: progress === 100 ? 'completed' : 'running' } : j));
+      if (progress === 100) clearInterval(interval);
+    }, 500);
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-7xl mx-auto">
+        <header className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-2xl font-semibold">Explorador multi-nube</h1>
+            <p className="text-sm text-gray-600">Visualice y transfiera archivos entre sus nubes desde CloneDrive.</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="text-sm text-gray-700">{user.name}</div>
+            <div className={`px-3 py-1 rounded-full text-xs ${membership === 'free' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'}`}>{membership.toUpperCase()}</div>
+          </div>
+        </header>
+
+        <div className="grid grid-cols-12 gap-6">
+          {/* Accounts & connections */}
+          <aside className="col-span-3 bg-white rounded-lg p-4 shadow-sm">
+            <h3 className="font-medium mb-3">Conexiones</h3>
+            <ul className="space-y-2">
+              {accounts.map(acc => (
+                <li key={acc.id} className={`p-2 rounded-md cursor-pointer ${selectedAccount?.id === acc.id ? 'bg-sky-50 border border-sky-200' : 'hover:bg-gray-50'}`} onClick={() => setSelectedAccount(acc)}>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="text-sm font-medium">{acc.name}</div>
+                      <div className="text-xs text-gray-500">{acc.provider}</div>
+                    </div>
+                    <div className="text-xs text-gray-400">{acc.connected ? 'Conectado' : 'No'}</div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+
+            <div className="mt-6">
+              <button onClick={() => alert('Ir a Integraciones')} className="w-full bg-sky-600 text-white py-2 rounded-md">Administrar integraciones</button>
+            </div>
+          </aside>
+
+          {/* File explorer */}
+          <main className="col-span-6 bg-white rounded-lg p-4 shadow-sm">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-medium">{selectedAccount ? `${selectedAccount.name}` : 'Selecciona una cuenta'}</h3>
+              <div className="flex items-center gap-2">
+                <input placeholder="Buscar..." value={search} onChange={(e) => setSearch(e.target.value)} className="border rounded px-3 py-1 text-sm" />
+                <button onClick={() => fetchListing(selectedAccount?.id, '')} className="text-sm px-3 py-1 border rounded">Actualizar</button>
+              </div>
+            </div>
+
+            <div className="h-[480px] overflow-auto">
+              {loading && <div className="text-center text-sm text-gray-500">Cargando...</div>}
+              {!loading && tree.length === 0 && <div className="text-center text-sm text-gray-500">No hay archivos aquí.</div>}
+
+              <ul className="space-y-2">
+                {tree.filter(n => !search || n.name.toLowerCase().includes(search.toLowerCase())).map(node => (
+                  <li key={node.id} onClick={() => onSelectNode(node)} className={`p-2 rounded-md cursor-pointer ${selectedNode?.id === node.id ? 'bg-sky-50 border border-sky-200' : 'hover:bg-gray-50'}`}>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="text-sm font-medium">{node.name}</div>
+                        <div className="text-xs text-gray-500">{node.mimeType === 'folder' ? 'Carpeta' : node.mimeType}</div>
+                      </div>
+                      <div className="text-xs text-gray-400">{node.size ? `${Math.round(node.size/1024)} KB` : ''}</div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="mt-4 flex gap-2">
+              <button onClick={openTransferModal} className="bg-indigo-600 text-white px-4 py-2 rounded disabled:opacity-50" disabled={!selectedNode}>Transferir</button>
+              <button onClick={() => alert('Descargar (placeholder)')} className="px-4 py-2 border rounded">Descargar</button>
+              <button onClick={() => alert('Historial (placeholder)')} className="px-4 py-2 border rounded">Historial</button>
+            </div>
+          </main>
+
+          {/* Preview / Details */}
+          <aside className="col-span-3 bg-white rounded-lg p-4 shadow-sm">
+            <h3 className="font-medium">Vista previa</h3>
+            {!selectedNode && <div className="text-sm text-gray-500 mt-3">Seleccione un archivo o carpeta para ver detalles.</div>}
+            {selectedNode && (
+              <div className="mt-3">
+                <div className="text-sm font-semibold">{selectedNode.name}</div>
+                <div className="text-xs text-gray-500 mt-2">Tipo: {selectedNode.mimeType}</div>
+                <div className="text-xs text-gray-500">Ruta: {selectedNode.path}</div>
+                <div className="mt-3">
+                  <strong>Opciones</strong>
+                  <ul className="mt-2 text-sm text-gray-600 space-y-1">
+                    <li>- Descargar</li>
+                    <li>- Ver historial</li>
+                    <li>- Duplicados</li>
+                  </ul>
+                </div>
+              </div>
+            )}
+
+            <div className="mt-6 border-t pt-4">
+              <h4 className="text-sm font-medium">Actividades recientes</h4>
+              <ul className="mt-2 text-xs text-gray-600 space-y-2">
+                {jobs.slice(0,5).map(j => (
+                  <li key={j.id} className="flex items-center justify-between">
+                    <div>{j.name}</div>
+                    <div className="ml-2 text-xs text-gray-500">{j.status} • {Math.round(j.progress)}%</div>
+                  </li>
+                ))}
+                {jobs.length === 0 && <li className="text-gray-400">Sin actividad reciente.</li>}
+              </ul>
+            </div>
+          </aside>
+        </div>
+
+        {/* Transfer modal (simple) */}
+        {transferOpen && (
+          <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-5 w-[720px] max-w-full">
+              <h3 className="text-lg font-semibold">Transferir</h3>
+              <p className="text-sm text-gray-600">{selectedNode ? `Enviar: ${selectedNode.name}` : ''}</p>
+
+              <div className="mt-4 grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs text-gray-600 mb-1">Origen</label>
+                  <div className="p-3 border rounded">{selectedAccount?.name}</div>
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-600 mb-1">Destino</label>
+                  <select value={destAccount?.id || ''} onChange={(e) => setDestAccount(accounts.find(a=>a.id===e.target.value))} className="w-full border rounded p-2">
+                    <option value="">-- Seleccione destino --</option>
+                    {accounts.filter(a => a.id !== selectedAccount.id).map(a => (
+                      <option key={a.id} value={a.id}>{a.name} ({a.provider})</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="mt-4">
+                <label className="block text-xs text-gray-600 mb-1">Opciones</label>
+                <div className="flex items-center gap-3">
+                  <label className="inline-flex items-center gap-2"><input type="checkbox" checked={transferOptions.dedupe} onChange={(e)=>setTransferOptions(o=>({...o,dedupe:e.target.checked}))} /> Omitir duplicados</label>
+                  <label className="inline-flex items-center gap-2"><input type="checkbox" checked={transferOptions.preserveTimestamps} onChange={(e)=>setTransferOptions(o=>({...o,preserveTimestamps:e.target.checked}))} /> Conservar fechas</label>
+                </div>
+                <div className="mt-2 text-xs text-gray-500">Si está transfiriendo Google Docs, puede exportar como: </div>
+                <select value={transferOptions.convertGoogleDocs} onChange={(e)=>setTransferOptions(o=>({...o,convertGoogleDocs:e.target.value}))} className="mt-2 border rounded p-2">
+                  <option value="docx">DOCX</option>
+                  <option value="pdf">PDF</option>
+                </select>
+              </div>
+
+              <div className="mt-6 flex justify-end gap-2">
+                <button onClick={()=>setTransferOpen(false)} className="px-4 py-2 border rounded">Cancelar</button>
+                <button onClick={startTransfer} className="px-4 py-2 bg-indigo-600 text-white rounded">Iniciar transferencia</button>
+              </div>
+
+              {membership === 'free' && (
+                <div className="mt-4 text-sm text-red-600">Nota: La transferencia entre nubes requiere plan PRO. <button onClick={()=>alert('Upgrade flow')} className="underline">Subir de plan</button></div>
+              )}
+            </div>
+          </div>
+        )}
+
+      </div>
+    </div>
+  );
+}

@@ -1,0 +1,36 @@
+{
+  "app": {
+    "title": "Clone Drive",
+    "description": "Gestión de archivos de Google Drive"
+  },
+  "navigation": {
+    "home": "Inicio",
+    "files": "Archivos",
+    "operations": "Operaciones"
+  },
+  "language": {
+    "select": "Seleccionar idioma",
+    "spanish": "Español",
+    "english": "English",
+    "auto": "Automático"
+  },
+  "buttons": {
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "save": "Guardar",
+    "close": "Cerrar",
+    "retry": "Reintentar",
+    "back": "Volver",
+    "next": "Siguiente",
+    "change": "Cambiar",
+    "select": "Seleccionar"
+  },
+  "status": {
+    "loading": "Cargando...",
+    "success": "Éxito",
+    "error": "Error",
+    "completed": "Completado",
+    "pending": "Pendiente",
+    "inProgress": "En progreso"
+  }
+}
