@@ -32,10 +32,10 @@ export default function Landing() {
             <div className="flex items-center gap-3">
               <LanguageSwitcher variant="icon" />
               <Button variant="outline" onClick={handleSignup} data-testid="button-signup">
-                {t('common:auth.signup')}
+                Sign Up
               </Button>
               <Button onClick={handleLogin} data-testid="button-login">
-                {t('common:auth.login')}
+                Log In
               </Button>
             </div>
           </div>
