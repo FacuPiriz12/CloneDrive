@@ -22,9 +22,7 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                <CloneDriveLogo className="w-6 h-6 text-primary-foreground" />
-              </div>
+              <CloneDriveLogo className="w-10 h-10" />
               <h1 className="text-xl font-bold text-foreground">CloneDrive</h1>
             </div>
             <Button onClick={handleLogin} data-testid="button-login">
@@ -38,9 +36,7 @@ export default function Landing() {
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
           <div className="mb-8">
-            <div className="w-24 h-24 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
-              <CloneDriveLogo className="w-14 h-14 text-primary-foreground" />
-            </div>
+            <CloneDriveLogo className="w-24 h-24 mx-auto mb-6" />
             <h1 className="text-5xl font-bold text-foreground mb-6 leading-tight">
               {t('hero.title')}
               <span className="text-primary block">{t('hero.subtitle')}</span>
