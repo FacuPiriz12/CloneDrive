@@ -36,7 +36,6 @@ export default function Landing() {
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
           <div className="mb-8">
-            <CloneDriveLogo className="w-24 h-24 mx-auto mb-6" />
             <h1 className="text-5xl font-bold text-foreground mb-6 leading-tight">
               {t('hero.title')}
               <span className="text-primary block">{t('hero.subtitle')}</span>
