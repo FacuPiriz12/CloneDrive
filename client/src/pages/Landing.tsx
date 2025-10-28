@@ -21,7 +21,7 @@ export default function Landing() {
       <header className="bg-card/80 backdrop-blur-sm border-b border-border/50 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-2">
               <CloneDriveLogo className="w-14 h-14" />
               <h1 className="text-xl font-bold text-foreground">CloneDrive</h1>
             </div>
