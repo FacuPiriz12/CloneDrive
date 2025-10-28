@@ -87,21 +87,32 @@ export default function LoginForm({ onReplitLogin }: LoginFormProps) {
         </CardHeader>
 
         <CardContent className="space-y-4">
-          {/* Replit Auth Button - Primary Option */}
+          {/* Replit Auth Button - Secondary Option */}
           <Button 
             onClick={onReplitLogin}
+            variant="outline"
             className="w-full font-medium py-3 shadow-sm hover:shadow-md transition-all duration-300"
             data-testid="button-replit-login"
           >
-            <div className="w-5 h-5 bg-white rounded mr-2 flex items-center justify-center">
-              <span className="text-blue-600 text-xs font-bold">R</span>
+            <div className="w-5 h-5 bg-blue-600 rounded mr-2 flex items-center justify-center">
+              <span className="text-white text-xs font-bold">R</span>
             </div>
-            Continue with Replit
+            {t('login.continueWithReplit')}
           </Button>
 
-          {/* Removed email/password login as Supabase is not configured */}
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <Separator />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-card px-2 text-muted-foreground">
+                {t('login.orContinueWith')}
+              </span>
+            </div>
+          </div>
+
           {/* Traditional Login Form */}
-          {false && <Form {...form}>
+          <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
                 control={form.control}
@@ -172,14 +183,20 @@ export default function LoginForm({ onReplitLogin }: LoginFormProps) {
                 {isLoading ? t('common:status.loading') : t('login.signInButton')}
               </Button>
             </form>
-          </Form>}
+          </Form>
 
           <div className="text-center space-y-2">
+            <Link href="/forgot-password">
+              <Button variant="link" className="p-0 h-auto font-normal text-sm">
+                {t('login.forgotPassword')}
+              </Button>
+            </Link>
+            
             <div className="text-sm text-muted-foreground">
-              Don't have an account?{' '}
+              {t('login.noAccount')}{' '}
               <Link href="/signup">
                 <Button variant="link" className="p-0 h-auto font-normal text-sm">
-                  Sign Up
+                  {t('login.signUp')}
                 </Button>
               </Link>
             </div>
