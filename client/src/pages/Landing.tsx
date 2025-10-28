@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Cloud, Copy, Shield, Zap } from "lucide-react";
 import CloneDriveLogo from "@/components/CloneDriveLogo";
 import Footer from "@/components/Footer";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "wouter";
 
@@ -11,8 +12,11 @@ export default function Landing() {
   const [, setLocation] = useLocation();
   
   const handleLogin = () => {
-    // Redirect to login page instead of direct authentication
     setLocation("/login");
+  };
+
+  const handleSignup = () => {
+    setLocation("/signup");
   };
 
   return (
@@ -25,9 +29,15 @@ export default function Landing() {
               <CloneDriveLogo className="w-14 h-14" />
               <h1 className="text-xl font-bold text-foreground">CloneDrive</h1>
             </div>
-            <Button onClick={handleLogin} data-testid="button-login">
-              {t('common:auth.login')}
-            </Button>
+            <div className="flex items-center gap-3">
+              <LanguageSwitcher variant="icon" />
+              <Button variant="outline" onClick={handleSignup} data-testid="button-signup">
+                {t('common:auth.signup')}
+              </Button>
+              <Button onClick={handleLogin} data-testid="button-login">
+                {t('common:auth.login')}
+              </Button>
+            </div>
           </div>
         </div>
       </header>
