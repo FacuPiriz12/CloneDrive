@@ -16,20 +16,26 @@ async function getSupabaseConfig() {
 
 // Create Supabase client with config from server
 export async function createSupabaseClient() {
-  const config = await getSupabaseConfig();
-  
-  if (!config.url || !config.anonKey) {
-    throw new Error('Missing Supabase configuration')
-  }
-
-  return createClient(config.url, config.anonKey, {
-    auth: {
-      persistSession: true,
-      autoRefreshToken: true,
-      detectSessionInUrl: true
+  try {
+    const config = await getSupabaseConfig();
+    
+    if (!config.url || !config.anonKey) {
+      console.log('Supabase not configured, falling back to Replit Auth');
+      return null;
     }
-  });
+
+    return createClient(config.url, config.anonKey, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true
+      }
+    });
+  } catch (error) {
+    console.log('Supabase initialization failed, using Replit Auth only');
+    return null;
+  }
 }
 
-// Export a promise that resolves to the supabase client
+// Export a promise that resolves to the supabase client or null
 export const supabasePromise = createSupabaseClient();

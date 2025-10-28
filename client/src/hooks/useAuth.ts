@@ -22,10 +22,19 @@ export function useAuth() {
   // Initialize Supabase auth listener
   useEffect(() => {
     let mounted = true;
+    let cleanup: (() => void) | undefined;
     
     const initSupabaseAuth = async () => {
       try {
         const supabase = await supabasePromise;
+        
+        // Only proceed if Supabase credentials are configured
+        if (!supabase) {
+          if (mounted) {
+            setIsSupabaseLoading(false);
+          }
+          return;
+        }
         
         // Get initial session
         const { data: { session } } = await supabase.auth.getSession();
@@ -45,7 +54,7 @@ export function useAuth() {
           }
         );
 
-        return () => {
+        cleanup = () => {
           subscription.unsubscribe();
         };
       } catch (error) {
@@ -60,6 +69,7 @@ export function useAuth() {
     
     return () => {
       mounted = false;
+      cleanup?.();
     };
   }, [queryClient]);
 
