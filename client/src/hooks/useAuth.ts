@@ -76,35 +76,40 @@ export function useAuth() {
   // Query for backend user data
   const { data: backendUser, isLoading: isBackendLoading, error, isError } = useQuery({
     queryKey: ["/api/auth/user"],
-    queryFn: async () => {
+    queryFn: async ({ queryKey }) => {
       // If we have a Supabase user, include the auth token
       if (supabaseUser) {
         const supabase = await supabasePromise;
-        const { data: { session } } = await supabase.auth.getSession();
         
-        if (session?.access_token) {
-          const response = await fetch("/api/auth/user", {
-            headers: {
-              'Authorization': `Bearer ${session.access_token}`
+        // Only proceed if Supabase client exists
+        if (supabase) {
+          const { data: { session } } = await supabase.auth.getSession();
+          
+          if (session?.access_token) {
+            const response = await fetch("/api/auth/user", {
+              headers: {
+                'Authorization': `Bearer ${session.access_token}`
+              }
+            });
+            
+            if (!response.ok) {
+              if (response.status === 401) return null;
+              throw new Error('Failed to fetch user');
             }
-          });
-          
-          if (!response.ok) {
-            if (response.status === 401) return null;
-            throw new Error('Failed to fetch user');
+            
+            return response.json();
           }
-          
-          return response.json();
         }
       }
       
       // Fallback to regular query function (for Replit auth or dev mode)
-      return getQueryFn({ on401: "returnNull" })();
+      return getQueryFn({ on401: "returnNull" })({ queryKey });
     },
     retry: false,
-    refetchOnWindowFocus: false,
-    staleTime: 1000,
-    refetchInterval: false,
+    refetchOnWindowFocus: true,
+    refetchOnMount: 'always', // Always refetch on mount to catch new auth sessions
+    staleTime: 0, // Don't use stale data
+    gcTime: 0, // Don't keep data in cache
     enabled: !isSupabaseLoading, // Only run when Supabase auth is initialized
   });
 

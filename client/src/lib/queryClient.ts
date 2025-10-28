@@ -14,10 +14,14 @@ async function getAuthHeaders(): Promise<HeadersInit> {
   
   try {
     const supabase = await supabasePromise;
-    const { data: { session } } = await supabase.auth.getSession();
     
-    if (session?.access_token) {
-      headers['Authorization'] = `Bearer ${session.access_token}`;
+    // Only proceed if Supabase client was successfully created
+    if (supabase) {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (session?.access_token) {
+        headers['Authorization'] = `Bearer ${session.access_token}`;
+      }
     }
   } catch (error) {
     // Supabase auth not available or failed, will rely on cookies
