@@ -114,32 +114,21 @@ export default function SignupForm({ onReplitLogin }: SignupFormProps) {
         </CardHeader>
 
         <CardContent className="space-y-4">
-          {/* Replit Auth Button - Secondary Option */}
+          {/* Replit Auth Button - Primary Option */}
           <Button 
             onClick={onReplitLogin}
-            variant="outline"
             className="w-full font-medium py-3 shadow-sm hover:shadow-md transition-all duration-300"
             data-testid="button-replit-signup"
           >
-            <div className="w-5 h-5 bg-blue-600 rounded mr-2 flex items-center justify-center">
-              <span className="text-white text-xs font-bold">R</span>
+            <div className="w-5 h-5 bg-white rounded mr-2 flex items-center justify-center">
+              <span className="text-blue-600 text-xs font-bold">R</span>
             </div>
-            {t('signup.continueWithReplit')}
+            Continue with Replit
           </Button>
 
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <Separator />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-card px-2 text-muted-foreground">
-                {t('signup.orCreateAccountWith')}
-              </span>
-            </div>
-          </div>
-
+          {/* Removed email/password signup as Supabase is not configured */}
           {/* Traditional Signup Form */}
-          <Form {...form}>
+          {false && <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
                 control={form.control}
@@ -303,14 +292,14 @@ export default function SignupForm({ onReplitLogin }: SignupFormProps) {
                 {isLoading ? t('common:status.loading') : t('signup.createAccountButton')}
               </Button>
             </form>
-          </Form>
+          </Form>}
 
           <div className="text-center">
             <div className="text-sm text-muted-foreground">
-              {t('signup.hasAccount')}{' '}
+              Already have an account?{' '}
               <Link href="/login">
                 <Button variant="link" className="p-0 h-auto font-normal text-sm">
-                  {t('signup.signIn')}
+                  Sign In
                 </Button>
               </Link>
             </div>
