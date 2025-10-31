@@ -56,8 +56,8 @@ export default function Integrations() {
                   </Badge>
                 )}
               </div>
-              <CardHeader className="pb-4">
-                <div className="flex items-center gap-3 mb-2">
+              <CardHeader className="pb-2">
+                <div className="flex items-center gap-3 mb-1">
                   <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                     <GoogleDriveLogo className="w-6 h-6" />
                   </div>
@@ -67,7 +67,7 @@ export default function Integrations() {
                   </div>
                 </div>
               </CardHeader>
-              <CardContent className="pt-0">
+              <CardContent className="pt-0 pb-4">
                 <div className="space-y-2">
                   <p className="text-gray-600 text-sm">
                     Conecta tu cuenta de Google Drive para acceder y sincronizar archivos directamente desde nuestra plataforma.
