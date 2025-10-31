@@ -44,13 +44,13 @@ export default function Integrations() {
                       Conectado
                     </Badge>
                   ) : (
-                    <Badge variant="destructive" className="text-[10px] py-0 px-1.5 h-5">
+                    <Badge variant="default" className="bg-orange-100 text-orange-700 text-[10px] py-0 px-1.5 h-5">
                       <AlertTriangle className="w-2.5 h-2.5 mr-0.5" />
                       Token expirado
                     </Badge>
                   )
                 ) : (
-                  <Badge variant="secondary" className="text-[10px] py-0 px-1.5 h-5">
+                  <Badge variant="default" className="bg-red-100 text-red-700 text-[10px] py-0 px-1.5 h-5">
                     <XCircle className="w-2.5 h-2.5 mr-0.5" />
                     Desconectado
                   </Badge>
