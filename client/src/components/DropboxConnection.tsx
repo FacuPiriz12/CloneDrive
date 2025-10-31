@@ -180,24 +180,26 @@ export default function DropboxConnection({ variant = 'header' }: DropboxConnect
           )}
         </div>
 
-        {isConnected ? (
-          hasValidToken ? (
-            <Badge variant="default" className="bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300">
-              <CheckCircle className="w-3 h-3 mr-1" />
-              Conectado
-            </Badge>
+        <div className="ml-8">
+          {isConnected ? (
+            hasValidToken ? (
+              <Badge variant="default" className="bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300">
+                <CheckCircle className="w-3 h-3 mr-1" />
+                Conectado
+              </Badge>
+            ) : (
+              <Badge variant="destructive">
+                <AlertTriangle className="w-3 h-3 mr-1" />
+                Token expirado
+              </Badge>
+            )
           ) : (
-            <Badge variant="destructive">
-              <AlertTriangle className="w-3 h-3 mr-1" />
-              Token expirado
+            <Badge variant="secondary">
+              <XCircle className="w-3 h-3 mr-1" />
+              Desconectado
             </Badge>
-          )
-        ) : (
-          <Badge variant="secondary">
-            <XCircle className="w-3 h-3 mr-1" />
-            Desconectado
-          </Badge>
-        )}
+          )}
+        </div>
       </div>
     );
   }
