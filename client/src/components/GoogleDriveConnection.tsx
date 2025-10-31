@@ -171,6 +171,7 @@ export default function GoogleDriveConnection({ variant = 'header' }: GoogleDriv
               onClick={handleConnect}
               disabled={isConnecting}
               size="sm"
+              className="px-8"
               data-testid="button-connect-google"
             >
               {isConnecting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
