@@ -69,31 +69,20 @@ export default function Integrations() {
               </CardHeader>
               <CardContent className="pt-0 pb-4">
                 <div className="space-y-2">
-                  <p className="text-gray-600 text-sm">
-                    Conecta tu cuenta de Google Drive para acceder y sincronizar archivos directamente desde nuestra plataforma.
-                  </p>
-                  
-                  <div className="space-y-1">
-                    <h4 className="font-medium text-gray-900">Características:</h4>
-                    <ul className="text-sm text-gray-600 space-y-0.5">
-                      <li className="flex items-center gap-2">
-                        <CheckCircle className="w-4 h-4 text-green-500" />
-                        Sincronización automática
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <CheckCircle className="w-4 h-4 text-green-500" />
-                        Acceso a carpetas compartidas
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <CheckCircle className="w-4 h-4 text-green-500" />
-                        Gestión de permisos
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <CheckCircle className="w-4 h-4 text-green-500" />
-                        <strong>Soporte máximo:</strong> 5TB por archivo individual
-                      </li>
-                    </ul>
-                  </div>
+                  <ul className="text-sm text-gray-600 space-y-0.5">
+                    <li className="flex items-center gap-2">
+                      <CheckCircle className="w-3.5 h-3.5 text-green-500" />
+                      Sincronización automática
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle className="w-3.5 h-3.5 text-green-500" />
+                      Acceso a carpetas compartidas
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle className="w-3.5 h-3.5 text-green-500" />
+                      Soporte: 5TB por archivo
+                    </li>
+                  </ul>
                   
                   <div className="pt-2 border-t">
                     <GoogleDriveConnection variant="card" />
