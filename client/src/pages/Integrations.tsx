@@ -47,19 +47,19 @@ export default function Integrations() {
                       <p className="text-sm text-gray-500">Almacenamiento en la nube de Google</p>
                       {isGoogleConnected ? (
                         hasGoogleValidToken ? (
-                          <Badge variant="default" className="bg-green-100 text-green-700 text-xs">
-                            <CheckCircle className="w-3 h-3 mr-1" />
+                          <Badge variant="default" className="bg-green-100 text-green-700 text-[10px] py-0 px-1.5 h-5">
+                            <CheckCircle className="w-2.5 h-2.5 mr-0.5" />
                             Conectado
                           </Badge>
                         ) : (
-                          <Badge variant="destructive" className="text-xs">
-                            <AlertTriangle className="w-3 h-3 mr-1" />
+                          <Badge variant="destructive" className="text-[10px] py-0 px-1.5 h-5">
+                            <AlertTriangle className="w-2.5 h-2.5 mr-0.5" />
                             Token expirado
                           </Badge>
                         )
                       ) : (
-                        <Badge variant="secondary" className="text-xs">
-                          <XCircle className="w-3 h-3 mr-1" />
+                        <Badge variant="secondary" className="text-[10px] py-0 px-1.5 h-5">
+                          <XCircle className="w-2.5 h-2.5 mr-0.5" />
                           Desconectado
                         </Badge>
                       )}
