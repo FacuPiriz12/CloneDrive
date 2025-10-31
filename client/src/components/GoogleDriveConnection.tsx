@@ -24,7 +24,8 @@ import {
   CheckCircle, 
   XCircle, 
   AlertTriangle,
-  Loader2
+  Loader2,
+  HardDrive
 } from "lucide-react";
 import GoogleDriveLogo from "@/components/GoogleDriveLogo";
 
@@ -132,6 +133,7 @@ export default function GoogleDriveConnection({ variant = 'header' }: GoogleDriv
                   onClick={handleConnect}
                   disabled={isConnecting}
                   size="sm"
+                  className="px-8"
                   data-testid="button-reconnect-google"
                 >
                   {isConnecting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
@@ -143,6 +145,7 @@ export default function GoogleDriveConnection({ variant = 'header' }: GoogleDriv
                   <Button
                     variant="outline"
                     size="sm"
+                    className="px-8"
                     disabled={isDisconnecting}
                     data-testid="button-disconnect-google"
                   >
@@ -183,18 +186,18 @@ export default function GoogleDriveConnection({ variant = 'header' }: GoogleDriv
         <div className="ml-8">
           {isConnected ? (
             hasValidToken ? (
-              <Badge variant="default" className="bg-green-100 text-green-700">
+              <Badge variant="default" className="bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300">
                 <CheckCircle className="w-3 h-3 mr-1" />
                 Conectado
               </Badge>
             ) : (
-              <Badge variant="default" className="bg-orange-100 text-orange-700">
+              <Badge variant="default" className="bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300">
                 <AlertTriangle className="w-3 h-3 mr-1" />
                 Token expirado
               </Badge>
             )
           ) : (
-            <Badge variant="default" className="bg-red-100 text-red-700">
+            <Badge variant="default" className="bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300">
               <XCircle className="w-3 h-3 mr-1" />
               Desconectado
             </Badge>

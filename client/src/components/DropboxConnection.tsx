@@ -24,7 +24,8 @@ import {
   CheckCircle, 
   XCircle, 
   AlertTriangle,
-  Loader2
+  Loader2,
+  Folder
 } from "lucide-react";
 import DropboxLogo from "@/components/DropboxLogo";
 
@@ -132,6 +133,7 @@ export default function DropboxConnection({ variant = 'header' }: DropboxConnect
                   onClick={handleConnect}
                   disabled={isConnecting}
                   size="sm"
+                  className="px-8"
                   data-testid="button-reconnect-dropbox"
                 >
                   {isConnecting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
@@ -143,6 +145,7 @@ export default function DropboxConnection({ variant = 'header' }: DropboxConnect
                   <Button
                     variant="outline"
                     size="sm"
+                    className="px-8"
                     disabled={isDisconnecting}
                     data-testid="button-disconnect-dropbox"
                   >
