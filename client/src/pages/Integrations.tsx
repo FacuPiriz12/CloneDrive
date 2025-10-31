@@ -68,14 +68,14 @@ export default function Integrations() {
                 </div>
               </CardHeader>
               <CardContent className="pt-0">
-                <div className="space-y-4">
+                <div className="space-y-2">
                   <p className="text-gray-600 text-sm">
                     Conecta tu cuenta de Google Drive para acceder y sincronizar archivos directamente desde nuestra plataforma.
                   </p>
                   
-                  <div className="space-y-2">
+                  <div className="space-y-1">
                     <h4 className="font-medium text-gray-900">Características:</h4>
-                    <ul className="text-sm text-gray-600 space-y-1">
+                    <ul className="text-sm text-gray-600 space-y-0.5">
                       <li className="flex items-center gap-2">
                         <CheckCircle className="w-4 h-4 text-green-500" />
                         Sincronización automática
@@ -95,7 +95,7 @@ export default function Integrations() {
                     </ul>
                   </div>
                   
-                  <div className="pt-4 border-t">
+                  <div className="pt-2 border-t">
                     <GoogleDriveConnection variant="card" />
                   </div>
                 </div>
