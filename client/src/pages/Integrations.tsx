@@ -35,35 +35,35 @@ export default function Integrations() {
           {/* Integration Cards */}
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {/* Google Drive Integration */}
-            <Card className="hover:shadow-lg transition-shadow duration-200">
+            <Card className="hover:shadow-lg transition-shadow duration-200 relative">
+              <div className="absolute top-4 right-4 z-10">
+                {isGoogleConnected ? (
+                  hasGoogleValidToken ? (
+                    <Badge variant="default" className="bg-green-100 text-green-700 text-[10px] py-0 px-1.5 h-5">
+                      <CheckCircle className="w-2.5 h-2.5 mr-0.5" />
+                      Conectado
+                    </Badge>
+                  ) : (
+                    <Badge variant="destructive" className="text-[10px] py-0 px-1.5 h-5">
+                      <AlertTriangle className="w-2.5 h-2.5 mr-0.5" />
+                      Token expirado
+                    </Badge>
+                  )
+                ) : (
+                  <Badge variant="secondary" className="text-[10px] py-0 px-1.5 h-5">
+                    <XCircle className="w-2.5 h-2.5 mr-0.5" />
+                    Desconectado
+                  </Badge>
+                )}
+              </div>
               <CardHeader className="pb-4">
                 <div className="flex items-center gap-3 mb-2">
                   <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                     <GoogleDriveLogo className="w-6 h-6" />
                   </div>
-                  <div className="flex-1">
+                  <div>
                     <CardTitle className="text-xl">Google Drive</CardTitle>
-                    <div className="flex items-center justify-between gap-2">
-                      <p className="text-sm text-gray-500">Almacenamiento en la nube de Google</p>
-                      {isGoogleConnected ? (
-                        hasGoogleValidToken ? (
-                          <Badge variant="default" className="bg-green-100 text-green-700 text-[10px] py-0 px-1.5 h-5">
-                            <CheckCircle className="w-2.5 h-2.5 mr-0.5" />
-                            Conectado
-                          </Badge>
-                        ) : (
-                          <Badge variant="destructive" className="text-[10px] py-0 px-1.5 h-5">
-                            <AlertTriangle className="w-2.5 h-2.5 mr-0.5" />
-                            Token expirado
-                          </Badge>
-                        )
-                      ) : (
-                        <Badge variant="secondary" className="text-[10px] py-0 px-1.5 h-5">
-                          <XCircle className="w-2.5 h-2.5 mr-0.5" />
-                          Desconectado
-                        </Badge>
-                      )}
-                    </div>
+                    <p className="text-sm text-gray-500">Almacenamiento en la nube de Google</p>
                   </div>
                 </div>
               </CardHeader>
