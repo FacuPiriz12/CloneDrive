@@ -124,25 +124,6 @@ export default function GoogleDriveConnection({ variant = 'header' }: GoogleDriv
   if (variant === 'card') {
     return (
       <div className="flex items-center justify-between" data-testid="google-drive-card">
-        {isConnected ? (
-          hasValidToken ? (
-            <Badge variant="default" className="bg-green-100 text-green-700">
-              <CheckCircle className="w-3 h-3 mr-1" />
-              Conectado
-            </Badge>
-          ) : (
-            <Badge variant="destructive">
-              <AlertTriangle className="w-3 h-3 mr-1" />
-              Token expirado
-            </Badge>
-          )
-        ) : (
-          <Badge variant="secondary">
-            <XCircle className="w-3 h-3 mr-1" />
-            Desconectado
-          </Badge>
-        )}
-
         <div className="flex gap-2">
           {isConnected ? (
             <>
@@ -197,6 +178,25 @@ export default function GoogleDriveConnection({ variant = 'header' }: GoogleDriv
             </Button>
           )}
         </div>
+
+        {isConnected ? (
+          hasValidToken ? (
+            <Badge variant="default" className="bg-green-100 text-green-700">
+              <CheckCircle className="w-3 h-3 mr-1" />
+              Conectado
+            </Badge>
+          ) : (
+            <Badge variant="destructive">
+              <AlertTriangle className="w-3 h-3 mr-1" />
+              Token expirado
+            </Badge>
+          )
+        ) : (
+          <Badge variant="secondary">
+            <XCircle className="w-3 h-3 mr-1" />
+            Desconectado
+          </Badge>
+        )}
       </div>
     );
   }
