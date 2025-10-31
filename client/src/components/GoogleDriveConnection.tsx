@@ -123,59 +123,80 @@ export default function GoogleDriveConnection({ variant = 'header' }: GoogleDriv
   // Card variant - full connection management
   if (variant === 'card') {
     return (
-      <div className="flex gap-2" data-testid="google-drive-card">
+      <div className="flex items-center justify-between" data-testid="google-drive-card">
         {isConnected ? (
-          <>
-            {!hasValidToken && (
-              <Button
-                onClick={handleConnect}
-                disabled={isConnecting}
-                size="sm"
-                data-testid="button-reconnect-google"
-              >
-                {isConnecting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                Reconectar
-              </Button>
-            )}
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={isDisconnecting}
-                  data-testid="button-disconnect-google"
-                >
-                  {isDisconnecting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                  Desconectar
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>¿Desconectar Google Drive?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Esto eliminará el acceso a tu cuenta de Google Drive. No podrás copiar archivos hasta que vuelvas a conectar tu cuenta.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleDisconnect} data-testid="confirm-disconnect">
-                    Desconectar
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </>
+          hasValidToken ? (
+            <Badge variant="default" className="bg-green-100 text-green-700">
+              <CheckCircle className="w-3 h-3 mr-1" />
+              Conectado
+            </Badge>
+          ) : (
+            <Badge variant="destructive">
+              <AlertTriangle className="w-3 h-3 mr-1" />
+              Token expirado
+            </Badge>
+          )
         ) : (
-          <Button
-            onClick={handleConnect}
-            disabled={isConnecting}
-            size="sm"
-            data-testid="button-connect-google"
-          >
-            {isConnecting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-            Conectar Google Drive
-          </Button>
+          <Badge variant="secondary">
+            <XCircle className="w-3 h-3 mr-1" />
+            Desconectado
+          </Badge>
         )}
+
+        <div className="flex gap-2">
+          {isConnected ? (
+            <>
+              {!hasValidToken && (
+                <Button
+                  onClick={handleConnect}
+                  disabled={isConnecting}
+                  size="sm"
+                  data-testid="button-reconnect-google"
+                >
+                  {isConnecting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                  Reconectar
+                </Button>
+              )}
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={isDisconnecting}
+                    data-testid="button-disconnect-google"
+                  >
+                    {isDisconnecting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                    Desconectar
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>¿Desconectar Google Drive?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Esto eliminará el acceso a tu cuenta de Google Drive. No podrás copiar archivos hasta que vuelvas a conectar tu cuenta.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDisconnect} data-testid="confirm-disconnect">
+                      Desconectar
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </>
+          ) : (
+            <Button
+              onClick={handleConnect}
+              disabled={isConnecting}
+              size="sm"
+              data-testid="button-connect-google"
+            >
+              {isConnecting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              Conectar Google Drive
+            </Button>
+          )}
+        </div>
       </div>
     );
   }

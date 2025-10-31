@@ -1,18 +1,15 @@
-import { Settings, CheckCircle, AlertCircle, XCircle, AlertTriangle } from "lucide-react";
+import { Settings, CheckCircle, AlertCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import GoogleDriveConnection from "@/components/GoogleDriveConnection";
 import DropboxConnection from "@/components/DropboxConnection";
 import GoogleDriveLogo from "@/components/GoogleDriveLogo";
 import DropboxLogo from "@/components/DropboxLogo";
-import { useGoogleAuth } from "@/hooks/useGoogleAuth";
 import { useTranslation } from "react-i18next";
 
 export default function Integrations() {
   const { t } = useTranslation(['pages', 'common']);
-  const { isConnected: isGoogleConnected, hasValidToken: hasGoogleValidToken } = useGoogleAuth();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -35,29 +32,9 @@ export default function Integrations() {
           {/* Integration Cards */}
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {/* Google Drive Integration */}
-            <Card className="hover:shadow-lg transition-shadow duration-200 relative">
-              <div className="absolute top-4 right-4 z-10">
-                {isGoogleConnected ? (
-                  hasGoogleValidToken ? (
-                    <Badge variant="default" className="bg-green-100 text-green-700 text-[10px] py-0 px-1.5 h-5">
-                      <CheckCircle className="w-2.5 h-2.5 mr-0.5" />
-                      Conectado
-                    </Badge>
-                  ) : (
-                    <Badge variant="default" className="bg-orange-100 text-orange-700 text-[10px] py-0 px-1.5 h-5">
-                      <AlertTriangle className="w-2.5 h-2.5 mr-0.5" />
-                      Token expirado
-                    </Badge>
-                  )
-                ) : (
-                  <Badge variant="default" className="bg-red-100 text-red-700 text-[10px] py-0 px-1.5 h-5">
-                    <XCircle className="w-2.5 h-2.5 mr-0.5" />
-                    Desconectado
-                  </Badge>
-                )}
-              </div>
-              <CardHeader className="pb-2">
-                <div className="flex items-center gap-3 mb-1">
+            <Card className="hover:shadow-lg transition-shadow duration-200">
+              <CardHeader className="pb-4">
+                <div className="flex items-center gap-3 mb-2">
                   <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                     <GoogleDriveLogo className="w-6 h-6" />
                   </div>
@@ -67,24 +44,35 @@ export default function Integrations() {
                   </div>
                 </div>
               </CardHeader>
-              <CardContent className="pt-0 pb-4">
-                <div className="space-y-2">
-                  <ul className="text-sm text-gray-600 space-y-0.5">
-                    <li className="flex items-center gap-2">
-                      <CheckCircle className="w-3.5 h-3.5 text-green-500" />
-                      Sincronización automática
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <CheckCircle className="w-3.5 h-3.5 text-green-500" />
-                      Acceso a carpetas compartidas
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <CheckCircle className="w-3.5 h-3.5 text-green-500" />
-                      Soporte: 5TB por archivo
-                    </li>
-                  </ul>
+              <CardContent className="pt-0">
+                <div className="space-y-4">
+                  <p className="text-gray-600 text-sm">
+                    Conecta tu cuenta de Google Drive para acceder y sincronizar archivos directamente desde nuestra plataforma.
+                  </p>
                   
-                  <div className="pt-2 border-t">
+                  <div className="space-y-2">
+                    <h4 className="font-medium text-gray-900">Características:</h4>
+                    <ul className="text-sm text-gray-600 space-y-1">
+                      <li className="flex items-center gap-2">
+                        <CheckCircle className="w-4 h-4 text-green-500" />
+                        Sincronización automática
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <CheckCircle className="w-4 h-4 text-green-500" />
+                        Acceso a carpetas compartidas
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <CheckCircle className="w-4 h-4 text-green-500" />
+                        Gestión de permisos
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <CheckCircle className="w-4 h-4 text-green-500" />
+                        <strong>Soporte máximo:</strong> 5TB por archivo individual
+                      </li>
+                    </ul>
+                  </div>
+                  
+                  <div className="pt-4 border-t">
                     <GoogleDriveConnection variant="card" />
                   </div>
                 </div>
