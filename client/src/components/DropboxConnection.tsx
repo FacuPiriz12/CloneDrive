@@ -123,38 +123,25 @@ export default function DropboxConnection({ variant = 'header' }: DropboxConnect
   // Card variant - full connection management
   if (variant === 'card') {
     return (
-      <div className="p-4 border rounded-lg bg-white dark:bg-gray-950" data-testid="dropbox-card">
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-2">
-            <DropboxLogo className="w-5 h-5" />
-            <span className="font-medium">Dropbox</span>
-          </div>
-          {isConnected ? (
-            hasValidToken ? (
-              <Badge variant="default" className="bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300">
-                <CheckCircle className="w-3 h-3 mr-1" />
-                Conectado
-              </Badge>
-            ) : (
-              <Badge variant="destructive">
-                <AlertTriangle className="w-3 h-3 mr-1" />
-                Token expirado
-              </Badge>
-            )
-          ) : (
-            <Badge variant="secondary">
-              <XCircle className="w-3 h-3 mr-1" />
-              Desconectado
+      <div className="flex items-center justify-between" data-testid="dropbox-card">
+        {isConnected ? (
+          hasValidToken ? (
+            <Badge variant="default" className="bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300">
+              <CheckCircle className="w-3 h-3 mr-1" />
+              Conectado
             </Badge>
-          )}
-        </div>
-        
-        <p className="text-sm text-muted-foreground mb-4">
-          {isConnected 
-            ? "Tu cuenta de Dropbox está conectada. Puedes copiar archivos desde y hacia tu Dropbox."
-            : "Conecta tu cuenta de Dropbox para poder copiar archivos."
-          }
-        </p>
+          ) : (
+            <Badge variant="destructive">
+              <AlertTriangle className="w-3 h-3 mr-1" />
+              Token expirado
+            </Badge>
+          )
+        ) : (
+          <Badge variant="secondary">
+            <XCircle className="w-3 h-3 mr-1" />
+            Desconectado
+          </Badge>
+        )}
 
         <div className="flex gap-2">
           {isConnected ? (
