@@ -174,7 +174,7 @@ export default function GoogleDriveConnection({ variant = 'header' }: GoogleDriv
               data-testid="button-connect-google"
             >
               {isConnecting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-              Conectar Google Drive
+              Conectar
             </Button>
           )}
         </div>

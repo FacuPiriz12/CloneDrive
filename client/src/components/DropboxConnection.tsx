@@ -175,7 +175,7 @@ export default function DropboxConnection({ variant = 'header' }: DropboxConnect
               data-testid="button-connect-dropbox"
             >
               {isConnecting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-              Conectar Dropbox
+              Conectar
             </Button>
           )}
         </div>
