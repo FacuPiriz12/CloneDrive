@@ -1,15 +1,18 @@
-import { Settings, CheckCircle, AlertCircle } from "lucide-react";
+import { Settings, CheckCircle, AlertCircle, XCircle, AlertTriangle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import GoogleDriveConnection from "@/components/GoogleDriveConnection";
 import DropboxConnection from "@/components/DropboxConnection";
 import GoogleDriveLogo from "@/components/GoogleDriveLogo";
 import DropboxLogo from "@/components/DropboxLogo";
+import { useGoogleAuth } from "@/hooks/useGoogleAuth";
 import { useTranslation } from "react-i18next";
 
 export default function Integrations() {
   const { t } = useTranslation(['pages', 'common']);
+  const { isConnected: isGoogleConnected, hasValidToken: hasGoogleValidToken } = useGoogleAuth();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -38,9 +41,29 @@ export default function Integrations() {
                   <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                     <GoogleDriveLogo className="w-6 h-6" />
                   </div>
-                  <div>
+                  <div className="flex-1">
                     <CardTitle className="text-xl">Google Drive</CardTitle>
-                    <p className="text-sm text-gray-500">Almacenamiento en la nube de Google</p>
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="text-sm text-gray-500">Almacenamiento en la nube de Google</p>
+                      {isGoogleConnected ? (
+                        hasGoogleValidToken ? (
+                          <Badge variant="default" className="bg-green-100 text-green-700 text-xs">
+                            <CheckCircle className="w-3 h-3 mr-1" />
+                            Conectado
+                          </Badge>
+                        ) : (
+                          <Badge variant="destructive" className="text-xs">
+                            <AlertTriangle className="w-3 h-3 mr-1" />
+                            Token expirado
+                          </Badge>
+                        )
+                      ) : (
+                        <Badge variant="secondary" className="text-xs">
+                          <XCircle className="w-3 h-3 mr-1" />
+                          Desconectado
+                        </Badge>
+                      )}
+                    </div>
                   </div>
                 </div>
               </CardHeader>
