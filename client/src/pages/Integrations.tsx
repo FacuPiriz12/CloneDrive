@@ -32,7 +32,7 @@ export default function Integrations() {
           {/* Integration Cards */}
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {/* Google Drive Integration */}
-            <Card className="hover:shadow-lg transition-shadow duration-200">
+            <Card className="hover:shadow-lg transition-shadow duration-200 h-full flex flex-col">
               <CardHeader className="pb-4">
                 <div className="flex items-center gap-3 mb-2">
                   <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -44,8 +44,8 @@ export default function Integrations() {
                   </div>
                 </div>
               </CardHeader>
-              <CardContent className="pt-0">
-                <div className="space-y-4">
+              <CardContent className="pt-0 flex-1 flex flex-col">
+                <div className="space-y-4 flex-1">
                   <p className="text-gray-600 text-sm">
                     Conecta tu cuenta de Google Drive para acceder y sincronizar archivos directamente desde nuestra plataforma.
                   </p>
@@ -80,7 +80,7 @@ export default function Integrations() {
             </Card>
 
             {/* Dropbox Integration */}
-            <Card className="hover:shadow-lg transition-shadow duration-200">
+            <Card className="hover:shadow-lg transition-shadow duration-200 h-full flex flex-col">
               <CardHeader className="pb-4">
                 <div className="flex items-center gap-3 mb-2">
                   <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -92,8 +92,8 @@ export default function Integrations() {
                   </div>
                 </div>
               </CardHeader>
-              <CardContent className="pt-0">
-                <div className="space-y-4">
+              <CardContent className="pt-0 flex-1 flex flex-col">
+                <div className="space-y-4 flex-1">
                   <p className="text-gray-600 text-sm">
                     Integra tu cuenta de Dropbox para gestionar archivos y colaborar en documentos de forma eficiente.
                   </p>
