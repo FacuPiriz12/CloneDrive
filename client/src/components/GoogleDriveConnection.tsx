@@ -188,13 +188,13 @@ export default function GoogleDriveConnection({ variant = 'header' }: GoogleDriv
                 Conectado
               </Badge>
             ) : (
-              <Badge variant="destructive">
+              <Badge variant="default" className="bg-orange-100 text-orange-700">
                 <AlertTriangle className="w-3 h-3 mr-1" />
                 Token expirado
               </Badge>
             )
           ) : (
-            <Badge variant="secondary">
+            <Badge variant="default" className="bg-red-100 text-red-700">
               <XCircle className="w-3 h-3 mr-1" />
               Desconectado
             </Badge>
