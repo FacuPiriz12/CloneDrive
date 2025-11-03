@@ -57,7 +57,7 @@ export default function Sidebar() {
 
   return (
     <aside 
-      className="w-[250px] bg-white shadow-[2px_0_5px_rgba(0,0,0,0.05)] overflow-y-auto sticky top-[65px] h-[calc(100vh-65px)]" 
+      className="group w-[70px] hover:w-[250px] bg-white shadow-[2px_0_5px_rgba(0,0,0,0.05)] overflow-y-auto overflow-x-hidden sticky top-[65px] h-[calc(100vh-65px)] transition-all duration-300 ease-in-out" 
       data-testid="sidebar-main"
     >
       {/* Navigation Menu */}
@@ -76,8 +76,8 @@ export default function Sidebar() {
                   }`}
                   data-testid={`link-nav-${item.path.substring(1) || 'home'}`}
                 >
-                  <item.icon className="w-5 h-5" />
-                  <span className="font-medium">{item.label}</span>
+                  <item.icon className="w-5 h-5 flex-shrink-0" />
+                  <span className="font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">{item.label}</span>
                 </Link>
               </li>
             );
@@ -86,21 +86,21 @@ export default function Sidebar() {
       </nav>
       
       {/* Storage Status */}
-      <div className="px-6 mt-8">
-        <h3 className="text-[0.9rem] mb-2 text-muted-foreground">{t('sidebar.storage')}</h3>
+      <div className="px-6 mt-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <h3 className="text-[0.9rem] mb-2 text-muted-foreground whitespace-nowrap">{t('sidebar.storage')}</h3>
         <div className="mb-2">
           <div className="h-[6px] bg-border rounded-full overflow-hidden">
             <div className="h-full bg-primary rounded-full w-[65%]"></div>
           </div>
         </div>
-        <div className="text-[0.8rem] text-muted-foreground">
+        <div className="text-[0.8rem] text-muted-foreground whitespace-nowrap">
           {t('sidebar.storageUsed', { used: '8.2 GB', total: '15 GB' })}
         </div>
       </div>
       
       {/* Recent Activities */}
-      <div className="px-6 mt-8 border-t border-border pt-6">
-        <h3 className="text-[0.9rem] font-medium mb-3 text-muted-foreground">{t('sidebar.recentActivity')}</h3>
+      <div className="px-6 mt-8 border-t border-border pt-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <h3 className="text-[0.9rem] font-medium mb-3 text-muted-foreground whitespace-nowrap">{t('sidebar.recentActivity')}</h3>
         <div className="space-y-3">
           {/* Active Operations */}
           {activeOperations.map((operation: CopyOperation) => (
