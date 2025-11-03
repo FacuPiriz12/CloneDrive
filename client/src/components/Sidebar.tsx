@@ -9,12 +9,13 @@ import {
   Check, 
   Loader2,
   Settings,
-  ArrowRightLeft 
+  ArrowRightLeft,
+  Shield
 } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { Progress } from "@/components/ui/progress";
 import { useTranslation } from "react-i18next";
-import type { CopyOperation } from "@shared/schema";
+import type { CopyOperation, User } from "@shared/schema";
 
 export default function Sidebar() {
   const { t } = useTranslation(['common']);
@@ -25,6 +26,10 @@ export default function Sidebar() {
   const { data: operations = [] } = useQuery({
     queryKey: ["/api/copy-operations"],
     refetchInterval: 5000, // Poll every 5 seconds for active operations
+  });
+
+  const { data: user, isLoading: userLoading } = useQuery<User>({
+    queryKey: ["/api/auth/user"],
   });
 
   // Track completed operations to invalidate drive-files cache
@@ -55,6 +60,11 @@ export default function Sidebar() {
     { path: "/analytics", icon: BarChart3, label: t('navigation.analytics') },
   ];
 
+  // Admin-only navigation - only show if user is loaded and is admin
+  const adminNavItems = !userLoading && user?.role === 'admin' ? [
+    { path: "/admin", icon: Shield, label: "Panel Admin" },
+  ] : [];
+
   return (
     <aside 
       className="group w-[70px] hover:w-[250px] bg-white shadow-[2px_0_5px_rgba(0,0,0,0.05)] overflow-y-auto overflow-x-hidden sticky top-[65px] h-[calc(100vh-65px)] transition-all duration-300 ease-in-out" 
@@ -75,6 +85,27 @@ export default function Sidebar() {
                       : "hover:bg-primary/10 hover:text-primary"
                   }`}
                   data-testid={`link-nav-${item.path.substring(1) || 'home'}`}
+                >
+                  <item.icon className="w-5 h-5 flex-shrink-0" />
+                  <span className="font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">{item.label}</span>
+                </Link>
+              </li>
+            );
+          })}
+          
+          {/* Admin Navigation - Only visible for admin users */}
+          {adminNavItems.map((item) => {
+            const isActive = location.startsWith(item.path);
+            return (
+              <li key={item.path}>
+                <Link 
+                  href={item.path}
+                  className={`flex items-center gap-4 px-6 py-3 cursor-pointer transition-all duration-200 text-muted-foreground border-t border-border ${
+                    isActive 
+                      ? "bg-primary/10 text-primary border-l-3 border-l-primary" 
+                      : "hover:bg-primary/10 hover:text-primary"
+                  }`}
+                  data-testid="link-nav-admin"
                 >
                   <item.icon className="w-5 h-5 flex-shrink-0" />
                   <span className="font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">{item.label}</span>

@@ -42,6 +42,19 @@ export interface IStorage {
     subscriptionId?: string;
   }): Promise<User>;
   
+  // Admin user operations
+  getAllUsers(page?: number, limit?: number): Promise<{ users: User[]; total: number; totalPages: number }>;
+  updateUserLimits(userId: string, limits: {
+    maxStorageBytes?: number;
+    maxConcurrentOperations?: number;
+    maxDailyOperations?: number;
+  }): Promise<User>;
+  updateUserRole(userId: string, role: string): Promise<User>;
+  suspendUser(userId: string): Promise<User>;
+  activateUser(userId: string): Promise<User>;
+  deleteUser(userId: string): Promise<void>;
+  getUserActivity(userId: string): Promise<{ operations: CopyOperation[]; files: CloudFile[] }>;
+  
   // Cloud files operations (Google Drive, Dropbox, etc.)
   createCloudFile(cloudFile: InsertCloudFile): Promise<CloudFile>;
   getUserCloudFiles(userId: string, page?: number, limit?: number): Promise<{ files: CloudFile[]; total: number; totalPages: number }>;
@@ -52,6 +65,29 @@ export interface IStorage {
   getCopyOperation(id: string): Promise<CopyOperation | undefined>;
   getUserCopyOperations(userId: string): Promise<CopyOperation[]>;
   getRecentCopyOperations(userId: string, limit: number): Promise<CopyOperation[]>;
+  
+  // Admin operations
+  getAllOperations(filters?: {
+    userId?: string;
+    status?: string;
+    provider?: string;
+    startDate?: Date;
+    endDate?: Date;
+    page?: number;
+    limit?: number;
+  }): Promise<{ operations: CopyOperation[]; total: number; totalPages: number }>;
+  getSystemMetrics(): Promise<{
+    totalUsers: number;
+    activeUsers: number;
+    totalOperations: number;
+    operationsToday: number;
+    successRate: number;
+    avgDuration: number;
+    totalStorage: number;
+    operationsByStatus: { status: string; count: number }[];
+    operationsByProvider: { provider: string; count: number }[];
+  }>;
+  retryOperation(id: string): Promise<CopyOperation>;
   
   // Job queue operations
   claimPendingJobs(workerId: string, limit: number): Promise<CopyOperation[]>;
@@ -152,6 +188,122 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
+  async updateUserStripeInfo(userId: string, stripeData: {
+    customerId?: string;
+    subscriptionId?: string;
+  }): Promise<User> {
+    const [user] = await getDb()
+      .update(users)
+      .set({
+        stripeCustomerId: stripeData.customerId,
+        stripeSubscriptionId: stripeData.subscriptionId,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, userId))
+      .returning();
+    return user;
+  }
+
+  // Admin user operations
+  async getAllUsers(page: number = 1, limit: number = 20): Promise<{ users: User[]; total: number; totalPages: number }> {
+    const offset = (page - 1) * limit;
+    
+    const allUsers = await getDb()
+      .select()
+      .from(users)
+      .orderBy(desc(users.createdAt))
+      .limit(limit)
+      .offset(offset);
+    
+    const [{ count: total }] = await getDb()
+      .select({ count: sql<number>`count(*)` })
+      .from(users);
+    
+    const totalPages = Math.ceil(Number(total) / limit);
+    
+    return { users: allUsers, total: Number(total), totalPages };
+  }
+
+  async updateUserLimits(userId: string, limits: {
+    maxStorageBytes?: number;
+    maxConcurrentOperations?: number;
+    maxDailyOperations?: number;
+  }): Promise<User> {
+    const cleanLimits = Object.fromEntries(
+      Object.entries(limits).filter(([, value]) => value !== undefined)
+    );
+    
+    const [user] = await getDb()
+      .update(users)
+      .set({
+        ...cleanLimits,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, userId))
+      .returning();
+    return user;
+  }
+
+  async updateUserRole(userId: string, role: string): Promise<User> {
+    const [user] = await getDb()
+      .update(users)
+      .set({
+        role,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, userId))
+      .returning();
+    return user;
+  }
+
+  async suspendUser(userId: string): Promise<User> {
+    const [user] = await getDb()
+      .update(users)
+      .set({
+        isActive: false,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, userId))
+      .returning();
+    return user;
+  }
+
+  async activateUser(userId: string): Promise<User> {
+    const [user] = await getDb()
+      .update(users)
+      .set({
+        isActive: true,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, userId))
+      .returning();
+    return user;
+  }
+
+  async deleteUser(userId: string): Promise<void> {
+    await getDb()
+      .delete(users)
+      .where(eq(users.id, userId));
+  }
+
+  async getUserActivity(userId: string): Promise<{ operations: CopyOperation[]; files: CloudFile[] }> {
+    const operations = await getDb()
+      .select()
+      .from(copyOperations)
+      .where(eq(copyOperations.userId, userId))
+      .orderBy(desc(copyOperations.createdAt))
+      .limit(50);
+    
+    const files = await getDb()
+      .select()
+      .from(cloudFiles)
+      .where(eq(cloudFiles.userId, userId))
+      .orderBy(desc(cloudFiles.createdAt))
+      .limit(50);
+    
+    return { operations, files };
+  }
+
   async createCloudFile(cloudFile: InsertCloudFile): Promise<CloudFile> {
     const [file] = await getDb()
       .insert(cloudFiles)
@@ -228,6 +380,170 @@ export class DatabaseStorage implements IStorage {
       .where(eq(copyOperations.userId, userId))
       .orderBy(desc(copyOperations.createdAt))
       .limit(limit);
+  }
+
+  // Admin operations
+  async getAllOperations(filters?: {
+    userId?: string;
+    status?: string;
+    provider?: string;
+    startDate?: Date;
+    endDate?: Date;
+    page?: number;
+    limit?: number;
+  }): Promise<{ operations: CopyOperation[]; total: number; totalPages: number }> {
+    const page = filters?.page || 1;
+    const limit = filters?.limit || 20;
+    const offset = (page - 1) * limit;
+    
+    let query = getDb().select().from(copyOperations);
+    const conditions = [];
+    
+    if (filters?.userId) {
+      conditions.push(eq(copyOperations.userId, filters.userId));
+    }
+    if (filters?.status) {
+      conditions.push(eq(copyOperations.status, filters.status));
+    }
+    if (filters?.provider) {
+      conditions.push(eq(copyOperations.sourceProvider, filters.provider));
+    }
+    if (filters?.startDate) {
+      conditions.push(sql`${copyOperations.createdAt} >= ${filters.startDate}`);
+    }
+    if (filters?.endDate) {
+      conditions.push(sql`${copyOperations.createdAt} <= ${filters.endDate}`);
+    }
+    
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions)) as any;
+    }
+    
+    const operations = await query
+      .orderBy(desc(copyOperations.createdAt))
+      .limit(limit)
+      .offset(offset);
+    
+    // Count total
+    let countQuery = getDb().select({ count: sql<number>`count(*)` }).from(copyOperations);
+    if (conditions.length > 0) {
+      countQuery = countQuery.where(and(...conditions)) as any;
+    }
+    const [{ count: total }] = await countQuery;
+    
+    const totalPages = Math.ceil(Number(total) / limit);
+    
+    return { operations, total: Number(total), totalPages };
+  }
+
+  async getSystemMetrics(): Promise<{
+    totalUsers: number;
+    activeUsers: number;
+    totalOperations: number;
+    operationsToday: number;
+    successRate: number;
+    avgDuration: number;
+    totalStorage: number;
+    operationsByStatus: { status: string; count: number }[];
+    operationsByProvider: { provider: string; count: number }[];
+  }> {
+    // Total users
+    const [{ count: totalUsers }] = await getDb()
+      .select({ count: sql<number>`count(*)` })
+      .from(users);
+    
+    // Active users (with at least one operation)
+    const [{ count: activeUsers }] = await getDb()
+      .select({ count: sql<number>`count(DISTINCT user_id)` })
+      .from(copyOperations);
+    
+    // Total operations
+    const [{ count: totalOperations }] = await getDb()
+      .select({ count: sql<number>`count(*)` })
+      .from(copyOperations);
+    
+    // Operations today
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const [{ count: operationsToday }] = await getDb()
+      .select({ count: sql<number>`count(*)` })
+      .from(copyOperations)
+      .where(sql`${copyOperations.createdAt} >= ${today}`);
+    
+    // Success rate
+    const [{ count: completedOps }] = await getDb()
+      .select({ count: sql<number>`count(*)` })
+      .from(copyOperations)
+      .where(eq(copyOperations.status, 'completed'));
+    
+    const successRate = Number(totalOperations) > 0 
+      ? (Number(completedOps) / Number(totalOperations)) * 100 
+      : 0;
+    
+    // Average duration
+    const [{ avg: avgDuration }] = await getDb()
+      .select({ avg: sql<number>`AVG(duration)` })
+      .from(copyOperations)
+      .where(eq(copyOperations.status, 'completed'));
+    
+    // Total storage
+    const [{ sum: totalStorage }] = await getDb()
+      .select({ sum: sql<number>`COALESCE(SUM(file_size), 0)` })
+      .from(cloudFiles);
+    
+    // Operations by status
+    const operationsByStatus = await getDb()
+      .select({
+        status: copyOperations.status,
+        count: sql<number>`count(*)`,
+      })
+      .from(copyOperations)
+      .groupBy(copyOperations.status);
+    
+    // Operations by provider
+    const operationsByProvider = await getDb()
+      .select({
+        provider: copyOperations.sourceProvider,
+        count: sql<number>`count(*)`,
+      })
+      .from(copyOperations)
+      .where(sql`${copyOperations.sourceProvider} IS NOT NULL`)
+      .groupBy(copyOperations.sourceProvider);
+    
+    return {
+      totalUsers: Number(totalUsers),
+      activeUsers: Number(activeUsers),
+      totalOperations: Number(totalOperations),
+      operationsToday: Number(operationsToday),
+      successRate: Math.round(successRate * 100) / 100,
+      avgDuration: Number(avgDuration) || 0,
+      totalStorage: Number(totalStorage),
+      operationsByStatus: operationsByStatus.map(row => ({ 
+        status: row.status, 
+        count: Number(row.count) 
+      })),
+      operationsByProvider: operationsByProvider.map(row => ({ 
+        provider: row.provider || 'unknown', 
+        count: Number(row.count) 
+      })),
+    };
+  }
+
+  async retryOperation(id: string): Promise<CopyOperation> {
+    const [operation] = await getDb()
+      .update(copyOperations)
+      .set({
+        status: 'pending',
+        attempts: 0,
+        nextRunAt: new Date(),
+        errorMessage: null,
+        lockedBy: null,
+        lockedAt: null,
+        updatedAt: new Date(),
+      })
+      .where(eq(copyOperations.id, id))
+      .returning();
+    return operation;
   }
 
   // Job queue operations implementation  
@@ -536,6 +852,124 @@ class MemoryStorage implements IStorage {
     return user;
   }
 
+  async updateUserStripeInfo(userId: string, stripeData: {
+    customerId?: string;
+    subscriptionId?: string;
+  }): Promise<User> {
+    const existingUser = this.users.get(userId);
+    if (!existingUser) {
+      throw new Error('User not found');
+    }
+    
+    const user: User = {
+      ...existingUser,
+      stripeCustomerId: stripeData.customerId || existingUser.stripeCustomerId,
+      stripeSubscriptionId: stripeData.subscriptionId || existingUser.stripeSubscriptionId,
+      updatedAt: new Date(),
+    };
+    this.users.set(userId, user);
+    return user;
+  }
+
+  // Admin user operations
+  async getAllUsers(page: number = 1, limit: number = 20): Promise<{ users: User[]; total: number; totalPages: number }> {
+    const allUsers = Array.from(this.users.values())
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+    
+    const total = allUsers.length;
+    const totalPages = Math.ceil(total / limit);
+    const offset = (page - 1) * limit;
+    const users = allUsers.slice(offset, offset + limit);
+    
+    return { users, total, totalPages };
+  }
+
+  async updateUserLimits(userId: string, limits: {
+    maxStorageBytes?: number;
+    maxConcurrentOperations?: number;
+    maxDailyOperations?: number;
+  }): Promise<User> {
+    const existingUser = this.users.get(userId);
+    if (!existingUser) {
+      throw new Error('User not found');
+    }
+    
+    const cleanLimits = Object.fromEntries(
+      Object.entries(limits).filter(([, value]) => value !== undefined)
+    );
+    
+    const user: User = {
+      ...existingUser,
+      ...cleanLimits,
+      updatedAt: new Date(),
+    };
+    this.users.set(userId, user);
+    return user;
+  }
+
+  async updateUserRole(userId: string, role: string): Promise<User> {
+    const existingUser = this.users.get(userId);
+    if (!existingUser) {
+      throw new Error('User not found');
+    }
+    
+    const user: User = {
+      ...existingUser,
+      role,
+      updatedAt: new Date(),
+    };
+    this.users.set(userId, user);
+    return user;
+  }
+
+  async suspendUser(userId: string): Promise<User> {
+    const existingUser = this.users.get(userId);
+    if (!existingUser) {
+      throw new Error('User not found');
+    }
+    
+    const user: User = {
+      ...existingUser,
+      isActive: false,
+      updatedAt: new Date(),
+    };
+    this.users.set(userId, user);
+    return user;
+  }
+
+  async activateUser(userId: string): Promise<User> {
+    const existingUser = this.users.get(userId);
+    if (!existingUser) {
+      throw new Error('User not found');
+    }
+    
+    const user: User = {
+      ...existingUser,
+      isActive: true,
+      updatedAt: new Date(),
+    };
+    this.users.set(userId, user);
+    return user;
+  }
+
+  async deleteUser(userId: string): Promise<void> {
+    this.users.delete(userId);
+  }
+
+  async getUserActivity(userId: string): Promise<{ operations: CopyOperation[]; files: CloudFile[] }> {
+    const operations = Array.from(this.copyOperations.values())
+      .filter(op => op.userId === userId)
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+      .slice(0, 50);
+    
+    const files = Array.from(this.cloudFiles.values())
+      .filter(file => file.userId === userId)
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+      .slice(0, 50);
+    
+    return { operations, files };
+  }
+
   async createCloudFile(cloudFile: InsertCloudFile): Promise<CloudFile> {
     const file: CloudFile = {
       ...cloudFile,
@@ -604,6 +1038,141 @@ class MemoryStorage implements IStorage {
       .filter(op => op.userId === userId)
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
       .slice(0, limit);
+  }
+
+  // Admin operations
+  async getAllOperations(filters?: {
+    userId?: string;
+    status?: string;
+    provider?: string;
+    startDate?: Date;
+    endDate?: Date;
+    page?: number;
+    limit?: number;
+  }): Promise<{ operations: CopyOperation[]; total: number; totalPages: number }> {
+    const page = filters?.page || 1;
+    const limit = filters?.limit || 20;
+    const offset = (page - 1) * limit;
+    
+    let filteredOps = Array.from(this.copyOperations.values());
+    
+    if (filters?.userId) {
+      filteredOps = filteredOps.filter(op => op.userId === filters.userId);
+    }
+    if (filters?.status) {
+      filteredOps = filteredOps.filter(op => op.status === filters.status);
+    }
+    if (filters?.provider) {
+      filteredOps = filteredOps.filter(op => op.sourceProvider === filters.provider);
+    }
+    if (filters?.startDate) {
+      filteredOps = filteredOps.filter(op => op.createdAt >= filters.startDate!);
+    }
+    if (filters?.endDate) {
+      filteredOps = filteredOps.filter(op => op.createdAt <= filters.endDate!);
+    }
+    
+    const total = filteredOps.length;
+    const totalPages = Math.ceil(total / limit);
+    
+    const operations = filteredOps
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+      .slice(offset, offset + limit);
+    
+    return { operations, total, totalPages };
+  }
+
+  async getSystemMetrics(): Promise<{
+    totalUsers: number;
+    activeUsers: number;
+    totalOperations: number;
+    operationsToday: number;
+    successRate: number;
+    avgDuration: number;
+    totalStorage: number;
+    operationsByStatus: { status: string; count: number }[];
+    operationsByProvider: { provider: string; count: number }[];
+  }> {
+    const allUsers = Array.from(this.users.values());
+    const allOperations = Array.from(this.copyOperations.values());
+    const allFiles = Array.from(this.cloudFiles.values());
+    
+    // Total users
+    const totalUsers = allUsers.length;
+    
+    // Active users (with at least one operation)
+    const activeUsers = new Set(allOperations.map(op => op.userId)).size;
+    
+    // Total operations
+    const totalOperations = allOperations.length;
+    
+    // Operations today
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const operationsToday = allOperations.filter(op => op.createdAt >= today).length;
+    
+    // Success rate
+    const completedOps = allOperations.filter(op => op.status === 'completed').length;
+    const successRate = totalOperations > 0 
+      ? (completedOps / totalOperations) * 100 
+      : 0;
+    
+    // Average duration
+    const completedWithDuration = allOperations.filter(op => op.status === 'completed' && op.duration);
+    const avgDuration = completedWithDuration.length > 0
+      ? completedWithDuration.reduce((sum, op) => sum + (op.duration || 0), 0) / completedWithDuration.length
+      : 0;
+    
+    // Total storage
+    const totalStorage = allFiles.reduce((sum, file) => sum + (file.fileSize || 0), 0);
+    
+    // Operations by status
+    const statusCounts: Record<string, number> = {};
+    allOperations.forEach(op => {
+      statusCounts[op.status] = (statusCounts[op.status] || 0) + 1;
+    });
+    const operationsByStatus = Object.entries(statusCounts).map(([status, count]) => ({ status, count }));
+    
+    // Operations by provider
+    const providerCounts: Record<string, number> = {};
+    allOperations.forEach(op => {
+      if (op.sourceProvider) {
+        providerCounts[op.sourceProvider] = (providerCounts[op.sourceProvider] || 0) + 1;
+      }
+    });
+    const operationsByProvider = Object.entries(providerCounts).map(([provider, count]) => ({ provider, count }));
+    
+    return {
+      totalUsers,
+      activeUsers,
+      totalOperations,
+      operationsToday,
+      successRate: Math.round(successRate * 100) / 100,
+      avgDuration,
+      totalStorage,
+      operationsByStatus,
+      operationsByProvider,
+    };
+  }
+
+  async retryOperation(id: string): Promise<CopyOperation> {
+    const operation = this.copyOperations.get(id);
+    if (!operation) {
+      throw new Error('Operation not found');
+    }
+    
+    const updated: CopyOperation = {
+      ...operation,
+      status: 'pending',
+      attempts: 0,
+      nextRunAt: new Date(),
+      errorMessage: null,
+      lockedBy: null,
+      lockedAt: null,
+      updatedAt: new Date(),
+    };
+    this.copyOperations.set(id, updated);
+    return updated;
   }
 
   // Job queue operations implementation for memory storage

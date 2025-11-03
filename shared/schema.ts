@@ -34,6 +34,13 @@ export const users = pgTable("users", {
   updatedAt: timestamp("updated_at").defaultNow(),
   // Authentication provider - 'replit' or 'supabase'
   authProvider: varchar("auth_provider").notNull().default('replit'),
+  // User role - 'admin' or 'user'
+  role: varchar("role").notNull().default('user'),
+  // User limits
+  maxStorageBytes: integer("max_storage_bytes").default(16106127360), // 15 GB default
+  maxConcurrentOperations: integer("max_concurrent_operations").default(5),
+  maxDailyOperations: integer("max_daily_operations").default(100),
+  isActive: boolean("is_active").default(true),
   // Google OAuth fields
   googleAccessToken: text("google_access_token"),
   googleRefreshToken: text("google_refresh_token"),

@@ -17,6 +17,9 @@ import MyFiles from "@/pages/MyFiles";
 import Analytics from "@/pages/Analytics";
 import Settings from "@/pages/Settings";
 import Profile from "@/pages/Profile";
+import AdminDashboard from "@/pages/admin/Dashboard";
+import AdminUsers from "@/pages/admin/Users";
+import AdminOperations from "@/pages/admin/Operations";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -55,6 +58,24 @@ function Router() {
           <Route path="/analytics" component={Analytics} />
           <Route path="/settings" component={Settings} />
           <Route path="/profile" component={Profile} />
+          <Route path="/admin" component={() => {
+            if (user?.role !== 'admin') {
+              return <div className="p-6 max-w-7xl mx-auto"><h1 className="text-3xl font-bold mb-4">Acceso Denegado</h1><p>No tienes permisos para acceder a esta página.</p></div>;
+            }
+            return <AdminDashboard />;
+          }} />
+          <Route path="/admin/users" component={() => {
+            if (user?.role !== 'admin') {
+              return <div className="p-6 max-w-7xl mx-auto"><h1 className="text-3xl font-bold mb-4">Acceso Denegado</h1><p>No tienes permisos para acceder a esta página.</p></div>;
+            }
+            return <AdminUsers />;
+          }} />
+          <Route path="/admin/operations" component={() => {
+            if (user?.role !== 'admin') {
+              return <div className="p-6 max-w-7xl mx-auto"><h1 className="text-3xl font-bold mb-4">Acceso Denegado</h1><p>No tienes permisos para acceder a esta página.</p></div>;
+            }
+            return <AdminOperations />;
+          }} />
         </>
       )}
       <Route component={NotFound} />

@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { setupAuth, isAuthenticated } from "./replitAuth";
+import { setupAuth, isAuthenticated, isAdmin } from "./replitAuth";
 import { GoogleDriveService } from "./services/googleDriveService";
 import { DropboxService } from "./services/dropboxService";
 import { getQueueWorker } from "./queueWorker";
@@ -1602,6 +1602,162 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error getting OAuth status:", error);
       res.status(500).json({ message: "Failed to get OAuth status" });
+    }
+  });
+
+  // ============================================
+  // ADMIN ENDPOINTS
+  // ============================================
+
+  // Get all users (admin only)
+  app.get('/api/admin/users', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 20;
+      
+      const result = await storage.getAllUsers(page, limit);
+      res.json(result);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      res.status(500).json({ message: "Failed to fetch users" });
+    }
+  });
+
+  // Update user limits (admin only)
+  app.put('/api/admin/users/:id/limits', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const userId = req.params.id;
+      
+      const limitsSchema = z.object({
+        maxStorageBytes: z.number().positive().optional(),
+        maxConcurrentOperations: z.number().positive().optional(),
+        maxDailyOperations: z.number().positive().optional(),
+      });
+
+      const validation = limitsSchema.safeParse(req.body);
+      if (!validation.success) {
+        return res.status(400).json({
+          message: "Invalid limits data",
+          errors: validation.error.errors
+        });
+      }
+
+      const updatedUser = await storage.updateUserLimits(userId, validation.data);
+      res.json(updatedUser);
+    } catch (error) {
+      console.error("Error updating user limits:", error);
+      res.status(500).json({ message: "Failed to update user limits" });
+    }
+  });
+
+  // Update user role (admin only)
+  app.put('/api/admin/users/:id/role', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const userId = req.params.id;
+      const { role } = req.body;
+
+      if (!role || !['admin', 'user'].includes(role)) {
+        return res.status(400).json({ message: "Invalid role. Must be 'admin' or 'user'" });
+      }
+
+      const updatedUser = await storage.updateUserRole(userId, role);
+      res.json(updatedUser);
+    } catch (error) {
+      console.error("Error updating user role:", error);
+      res.status(500).json({ message: "Failed to update user role" });
+    }
+  });
+
+  // Suspend user (admin only)
+  app.post('/api/admin/users/:id/suspend', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const userId = req.params.id;
+      const updatedUser = await storage.suspendUser(userId);
+      res.json(updatedUser);
+    } catch (error) {
+      console.error("Error suspending user:", error);
+      res.status(500).json({ message: "Failed to suspend user" });
+    }
+  });
+
+  // Activate user (admin only)
+  app.post('/api/admin/users/:id/activate', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const userId = req.params.id;
+      const updatedUser = await storage.activateUser(userId);
+      res.json(updatedUser);
+    } catch (error) {
+      console.error("Error activating user:", error);
+      res.status(500).json({ message: "Failed to activate user" });
+    }
+  });
+
+  // Delete user (admin only)
+  app.delete('/api/admin/users/:id', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const userId = req.params.id;
+      await storage.deleteUser(userId);
+      res.json({ message: "User deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      res.status(500).json({ message: "Failed to delete user" });
+    }
+  });
+
+  // Get user activity (admin only)
+  app.get('/api/admin/users/:id/activity', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const userId = req.params.id;
+      const activity = await storage.getUserActivity(userId);
+      res.json(activity);
+    } catch (error) {
+      console.error("Error fetching user activity:", error);
+      res.status(500).json({ message: "Failed to fetch user activity" });
+    }
+  });
+
+  // Get all operations with filters (admin only)
+  app.get('/api/admin/operations', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const filters: any = {
+        page: parseInt(req.query.page as string) || 1,
+        limit: parseInt(req.query.limit as string) || 20,
+      };
+
+      if (req.query.userId) filters.userId = req.query.userId as string;
+      if (req.query.status) filters.status = req.query.status as string;
+      if (req.query.provider) filters.provider = req.query.provider as string;
+      if (req.query.startDate) filters.startDate = new Date(req.query.startDate as string);
+      if (req.query.endDate) filters.endDate = new Date(req.query.endDate as string);
+
+      const result = await storage.getAllOperations(filters);
+      res.json(result);
+    } catch (error) {
+      console.error("Error fetching operations:", error);
+      res.status(500).json({ message: "Failed to fetch operations" });
+    }
+  });
+
+  // Retry failed operation (admin only)
+  app.post('/api/admin/operations/:id/retry', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const operationId = req.params.id;
+      const retriedOperation = await storage.retryOperation(operationId);
+      res.json(retriedOperation);
+    } catch (error) {
+      console.error("Error retrying operation:", error);
+      res.status(500).json({ message: "Failed to retry operation" });
+    }
+  });
+
+  // Get system metrics (admin only)
+  app.get('/api/admin/metrics', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const metrics = await storage.getSystemMetrics();
+      res.json(metrics);
+    } catch (error) {
+      console.error("Error fetching metrics:", error);
+      res.status(500).json({ message: "Failed to fetch metrics" });
     }
   });
 

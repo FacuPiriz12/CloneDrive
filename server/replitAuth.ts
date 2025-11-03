@@ -306,3 +306,29 @@ export const isAuthenticated: RequestHandler = async (req, res, next) => {
     return;
   }
 };
+
+export const isAdmin: RequestHandler = async (req, res, next) => {
+  try {
+    const userId = (req.user as any).claims.sub;
+    
+    // In development, dev-user-123 is always admin
+    if (process.env.NODE_ENV === "development" && userId === "dev-user-123") {
+      return next();
+    }
+    
+    const user = await storage.getUser(userId);
+    
+    if (!user) {
+      return res.status(403).json({ message: "User not found" });
+    }
+    
+    if (user.role !== 'admin') {
+      return res.status(403).json({ message: "Access denied. Admin privileges required." });
+    }
+    
+    next();
+  } catch (error) {
+    console.error('Error checking admin privileges:', error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
