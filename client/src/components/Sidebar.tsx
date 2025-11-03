@@ -10,7 +10,9 @@ import {
   Loader2,
   Settings,
   ArrowRightLeft,
-  Shield
+  Shield,
+  Users,
+  FileText
 } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { Progress } from "@/components/ui/progress";
@@ -63,6 +65,8 @@ export default function Sidebar() {
   // Admin-only navigation - only show if user is loaded and is admin
   const adminNavItems = !userLoading && user?.role === 'admin' ? [
     { path: "/admin", icon: Shield, label: "Panel Admin" },
+    { path: "/admin/users", icon: Users, label: "Gestión de Usuarios" },
+    { path: "/admin/operations", icon: FileText, label: "Logs de Operaciones" },
   ] : [];
 
   return (
@@ -94,18 +98,20 @@ export default function Sidebar() {
           })}
           
           {/* Admin Navigation - Only visible for admin users */}
-          {adminNavItems.map((item) => {
-            const isActive = location.startsWith(item.path);
+          {adminNavItems.map((item, index) => {
+            const isActive = location === item.path;
             return (
               <li key={item.path}>
                 <Link 
                   href={item.path}
-                  className={`flex items-center gap-4 px-6 py-3 cursor-pointer transition-all duration-200 text-muted-foreground border-t border-border ${
+                  className={`flex items-center gap-4 px-6 py-3 cursor-pointer transition-all duration-200 text-muted-foreground ${
+                    index === 0 ? 'border-t border-border' : ''
+                  } ${
                     isActive 
                       ? "bg-primary/10 text-primary border-l-3 border-l-primary" 
                       : "hover:bg-primary/10 hover:text-primary"
                   }`}
-                  data-testid="link-nav-admin"
+                  data-testid={`link-nav-admin-${item.path.split('/').pop()}`}
                 >
                   <item.icon className="w-5 h-5 flex-shrink-0" />
                   <span className="font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">{item.label}</span>
