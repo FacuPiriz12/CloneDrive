@@ -83,13 +83,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // If user doesn't exist in database, create it (especially for development mode)
       if (!user) {
-        const userData = {
+        const userData: any = {
           id: userId,
           email: req.user.claims.email,
           firstName: req.user.claims.first_name,
           lastName: req.user.claims.last_name,
           profileImageUrl: req.user.claims.profile_image_url,
         };
+        
+        // In development, dev-user-123 is always admin
+        if (process.env.NODE_ENV === "development" && userId === "dev-user-123") {
+          userData.role = 'admin';
+        }
+        
         user = await storage.upsertUser(userData);
       }
       
