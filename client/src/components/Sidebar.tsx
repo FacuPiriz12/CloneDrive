@@ -134,55 +134,6 @@ export default function Sidebar() {
           {t('sidebar.storageUsed', { used: '8.2 GB', total: '15 GB' })}
         </div>
       </div>
-      
-      {/* Recent Activities */}
-      <div className="px-6 mt-8 border-t border-border pt-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        <h3 className="text-[0.9rem] font-medium mb-3 text-muted-foreground whitespace-nowrap">{t('sidebar.recentActivity')}</h3>
-        <div className="space-y-3">
-          {/* Active Operations */}
-          {activeOperations.map((operation: CopyOperation) => (
-            <div key={operation.id} className="flex items-start space-x-3" data-testid={`activity-operation-${operation.id}`}>
-              <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0">
-                <Loader2 className="w-4 h-4 text-primary animate-spin" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-medium text-foreground truncate">
-                  {t('sidebar.copyingFiles')}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {t('sidebar.filesProgress', { completed: operation.completedFiles || 0, total: operation.totalFiles || 0 })}
-                </p>
-              </div>
-            </div>
-          ))}
-          
-          {/* Recent Completed Operations */}
-          {recentOperations.map((operation: CopyOperation) => (
-            <div key={operation.id} className="flex items-start space-x-3" data-testid={`activity-completed-${operation.id}`}>
-              <div className="w-8 h-8 bg-secondary/20 rounded-full flex items-center justify-center flex-shrink-0">
-                <Check className="w-4 h-4 text-secondary" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-medium text-foreground">
-                  {t('sidebar.operationCompleted')}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {new Date(operation.updatedAt!).toLocaleTimeString()}
-                </p>
-              </div>
-            </div>
-          ))}
-
-          {/* Empty State */}
-          {activeOperations.length === 0 && recentOperations.length === 0 && (
-            <div className="text-center py-4">
-              <p className="text-xs text-muted-foreground">
-                {t('sidebar.noRecentActivity')}
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
     </aside>
   );
 }
