@@ -75,7 +75,7 @@ export default function Sidebar() {
       data-testid="sidebar-main"
     >
       {/* Navigation Menu */}
-      <nav className="py-6">
+      <nav className="py-6 bg-muted">
         <ul className="space-y-0">
           {navItems.map((item) => {
             const isActive = location === item.path;
