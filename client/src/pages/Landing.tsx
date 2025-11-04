@@ -6,6 +6,8 @@ import Footer from "@/components/Footer";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "wouter";
+import { AuroraBackground } from "@/components/ui/aurora-background";
+import { motion } from "framer-motion";
 
 export default function Landing() {
   const { t } = useTranslation(['landing', 'common']);
@@ -20,7 +22,7 @@ export default function Landing() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+    <div className="min-h-screen">
       {/* Header */}
       <header className="bg-card/80 backdrop-blur-sm border-b border-border/50 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -42,31 +44,38 @@ export default function Landing() {
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center">
-          <div className="mb-8">
-            <h1 className="text-5xl font-bold text-foreground mb-6 leading-tight">
-              {t('hero.title')}
-              <span className="text-primary block">{t('hero.subtitle')}</span>
-            </h1>
-            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              {t('hero.description')}
-            </p>
-            <Button 
-              size="lg" 
-              onClick={handleLogin}
-              className="text-lg px-8 py-6 shadow-lg hover:shadow-xl transition-all duration-300"
-              data-testid="button-get-started"
-            >
-              {t('hero.ctaButton')}
-            </Button>
-          </div>
-        </div>
-      </section>
+      {/* Hero Section with Aurora Background */}
+      <AuroraBackground>
+        <motion.div
+          initial={{ opacity: 0.0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{
+            delay: 0.3,
+            duration: 0.8,
+            ease: "easeInOut",
+          }}
+          className="relative flex flex-col gap-4 items-center justify-center px-4"
+        >
+          <h1 className="text-3xl md:text-7xl font-bold dark:text-white text-center">
+            {t('hero.title')}
+            <span className="text-primary block">{t('hero.subtitle')}</span>
+          </h1>
+          <p className="font-extralight text-base md:text-4xl dark:text-neutral-200 py-4 text-center max-w-2xl">
+            {t('hero.description')}
+          </p>
+          <Button 
+            size="lg" 
+            onClick={handleLogin}
+            className="text-lg px-8 py-6 shadow-lg hover:shadow-xl transition-all duration-300"
+            data-testid="button-get-started"
+          >
+            {t('hero.ctaButton')}
+          </Button>
+        </motion.div>
+      </AuroraBackground>
 
       {/* Features Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/30">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 via-white to-blue-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold text-foreground mb-4">
@@ -138,7 +147,7 @@ export default function Landing() {
       </section>
 
       {/* How it Works */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/30">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold text-foreground mb-4">
