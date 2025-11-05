@@ -71,19 +71,19 @@ export default function Sidebar() {
 
   return (
     <aside 
-      className="group w-[70px] hover:w-[250px] bg-[#0061D5] overflow-y-auto overflow-x-hidden sticky top-[65px] h-[calc(100vh-65px)] transition-all duration-300 ease-in-out" 
+      className="group w-[80px] hover:w-[250px] bg-[#0061D5] overflow-y-auto overflow-x-hidden sticky top-[65px] h-[calc(100vh-65px)] transition-all duration-300 ease-in-out" 
       data-testid="sidebar-main"
     >
       {/* Navigation Menu */}
-      <nav className="py-6 px-2">
+      <nav className="py-6 px-3">
         <ul className="space-y-1">
           {navItems.map((item) => {
             const isActive = location === item.path;
             return (
-              <li key={item.path} className="px-2">
+              <li key={item.path}>
                 <Link 
                   href={item.path}
-                  className={`flex items-center gap-4 p-3 cursor-pointer transition-all duration-200 rounded-lg ${
+                  className={`flex items-center gap-4 px-3 py-3 cursor-pointer transition-all duration-200 rounded-lg ${
                     isActive 
                       ? "bg-[#0074E8] text-white" 
                       : "text-white/50 hover:bg-[#0052B3] hover:text-white/90"
@@ -101,10 +101,10 @@ export default function Sidebar() {
           {adminNavItems.map((item, index) => {
             const isActive = location === item.path;
             return (
-              <li key={item.path} className={`px-2 ${index === 0 ? 'border-t border-white/20 mt-2 pt-2' : ''}`}>
+              <li key={item.path} className={index === 0 ? 'border-t border-white/20 mt-2 pt-2' : ''}>
                 <Link 
                   href={item.path}
-                  className={`flex items-center gap-4 p-3 cursor-pointer transition-all duration-200 rounded-lg ${
+                  className={`flex items-center gap-4 px-3 py-3 cursor-pointer transition-all duration-200 rounded-lg ${
                     isActive 
                       ? "bg-[#0074E8] text-white" 
                       : "text-white/50 hover:bg-[#0052B3] hover:text-white/90"
