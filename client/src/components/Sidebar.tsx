@@ -75,7 +75,7 @@ export default function Sidebar() {
       data-testid="sidebar-main"
     >
       {/* Navigation Menu */}
-      <nav className="py-6">
+      <nav className="py-6 px-3">
         <ul className="space-y-1">
           {navItems.map((item) => {
             const isActive = location === item.path;
@@ -83,7 +83,7 @@ export default function Sidebar() {
               <li key={item.path}>
                 <Link 
                   href={item.path}
-                  className={`flex items-center gap-4 px-6 py-3 cursor-pointer transition-all duration-200 ${
+                  className={`flex items-center gap-4 px-4 py-3 cursor-pointer transition-all duration-200 rounded-lg ${
                     isActive 
                       ? "bg-[#0074E8] text-white" 
                       : "text-white/50 hover:bg-[#0052B3] hover:text-white/90"
@@ -101,12 +101,10 @@ export default function Sidebar() {
           {adminNavItems.map((item, index) => {
             const isActive = location === item.path;
             return (
-              <li key={item.path}>
+              <li key={item.path} className={index === 0 ? 'border-t border-white/20 mt-2 pt-2' : ''}>
                 <Link 
                   href={item.path}
-                  className={`flex items-center gap-4 px-6 py-3 cursor-pointer transition-all duration-200 ${
-                    index === 0 ? 'border-t border-white/20 mt-2 pt-4' : ''
-                  } ${
+                  className={`flex items-center gap-4 px-4 py-3 cursor-pointer transition-all duration-200 rounded-lg ${
                     isActive 
                       ? "bg-[#0074E8] text-white" 
                       : "text-white/50 hover:bg-[#0052B3] hover:text-white/90"
