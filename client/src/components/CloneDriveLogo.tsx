@@ -13,7 +13,7 @@ export default function CloneDriveLogo({ className = "h-10" }: { className?: str
             font-family: 'Montserrat', sans-serif;
             font-weight: 700;
             fill: #0050ac;
-            letter-spacing: -16px;
+            letter-spacing: -4px;
           }
         `}
       </style>
