@@ -75,7 +75,7 @@ export default function Sidebar() {
       data-testid="sidebar-main"
     >
       {/* Navigation Menu */}
-      <nav className="py-6 px-2">
+      <nav className="py-6 px-3">
         <ul className="space-y-1">
           {navItems.map((item) => {
             const isActive = location === item.path;
@@ -83,7 +83,7 @@ export default function Sidebar() {
               <li key={item.path}>
                 <Link 
                   href={item.path}
-                  className={`flex items-center gap-4 px-5 py-3 cursor-pointer transition-all duration-200 rounded-lg ${
+                  className={`flex items-center justify-center group-hover:justify-start gap-4 px-3 py-3 cursor-pointer transition-all duration-200 rounded-lg ${
                     isActive 
                       ? "bg-[#0074E8] text-white" 
                       : "text-white/50 hover:bg-[#0052B3] hover:text-white/90"
@@ -104,7 +104,7 @@ export default function Sidebar() {
               <li key={item.path} className={index === 0 ? 'border-t border-white/20 mt-2 pt-2' : ''}>
                 <Link 
                   href={item.path}
-                  className={`flex items-center gap-4 px-5 py-3 cursor-pointer transition-all duration-200 rounded-lg ${
+                  className={`flex items-center justify-center group-hover:justify-start gap-4 px-3 py-3 cursor-pointer transition-all duration-200 rounded-lg ${
                     isActive 
                       ? "bg-[#0074E8] text-white" 
                       : "text-white/50 hover:bg-[#0052B3] hover:text-white/90"
