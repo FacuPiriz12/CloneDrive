@@ -6,9 +6,6 @@ export default function Footer() {
   return (
     <footer className="py-8 px-4 sm:px-6 lg:px-8 border-t border-border bg-muted/30" data-testid="footer-main">
       <div className="max-w-6xl mx-auto text-center">
-        <div className="flex items-center justify-center space-x-2 mb-4">
-          <CloneDriveLogo className="h-12" />
-        </div>
         <p className="text-muted-foreground text-sm">
           {t('footer.copyright')}
         </p>
