@@ -70,8 +70,7 @@ export default function Header() {
           className="flex items-center gap-3 hover:opacity-80 transition-opacity"
           data-testid="button-logo-dashboard"
         >
-          <CloneDriveLogo className="w-7 h-7 text-primary text-[1.8rem]" />
-          <span className="text-[1.4rem] font-bold text-primary">CloneDrive</span>
+          <CloneDriveLogo className="h-10" />
         </button>
         
         {/* Search Bar */}

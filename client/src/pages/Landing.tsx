@@ -28,8 +28,7 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-2">
-              <CloneDriveLogo className="w-14 h-14" />
-              <h1 className="text-xl font-bold text-foreground">CloneDrive</h1>
+              <CloneDriveLogo className="h-12" />
             </div>
             <div className="flex items-center gap-3">
               <LanguageSwitcher variant="icon" />

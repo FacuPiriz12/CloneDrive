@@ -62,8 +62,8 @@ export default function EmailConfirmation() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-blue-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 p-4">
       <Card className="w-full max-w-md shadow-2xl border-0 bg-card/95 backdrop-blur-sm">
         <CardHeader className="text-center pb-4">
-          <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-            <CloneDriveLogo className="w-10 h-10 text-primary-foreground" />
+          <div className="flex items-center justify-center mx-auto mb-4">
+            <CloneDriveLogo className="h-14" />
           </div>
           <CardTitle className="text-2xl font-bold">
             {status === 'loading' && t('emailConfirmation.verifying')}
