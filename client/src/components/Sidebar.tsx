@@ -85,8 +85,8 @@ export default function Sidebar() {
                   href={item.path}
                   className={`flex items-center gap-4 px-6 py-3 cursor-pointer transition-all duration-200 ${
                     isActive 
-                      ? "bg-[#004A99] text-white" 
-                      : "text-white/90 hover:bg-[#0052B3]"
+                      ? "bg-[#0074E8] text-white" 
+                      : "text-white/50 hover:bg-[#0052B3] hover:text-white/90"
                   }`}
                   data-testid={`link-nav-${item.path.substring(1) || 'home'}`}
                 >
@@ -108,8 +108,8 @@ export default function Sidebar() {
                     index === 0 ? 'border-t border-white/20 mt-2 pt-4' : ''
                   } ${
                     isActive 
-                      ? "bg-[#004A99] text-white" 
-                      : "text-white/90 hover:bg-[#0052B3]"
+                      ? "bg-[#0074E8] text-white" 
+                      : "text-white/50 hover:bg-[#0052B3] hover:text-white/90"
                   }`}
                   data-testid={`link-nav-admin-${item.path.split('/').pop()}`}
                 >
