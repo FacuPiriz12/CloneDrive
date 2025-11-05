@@ -7,7 +7,7 @@ const resources = {
   es: {
     common: {
       app: {
-        title: "Clone Drive",
+        title: "TERA",
         description: "Gestión de archivos de Google Drive"
       },
       navigation: {
@@ -69,7 +69,7 @@ const resources = {
         inProgress: "En progreso"
       },
       footer: {
-        copyright: "© 2025 CloneDrive. Todos los derechos reservados."
+        copyright: "© 2025 TERA. Todos los derechos reservados."
       },
       sidebar: {
         recentActivity: "Actividad Reciente",
@@ -189,11 +189,11 @@ const resources = {
       hero: {
         title: "Copia archivos de Google Drive",
         subtitle: "de forma inteligente",
-        description: "Clone Drive te permite copiar archivos y carpetas desde drives compartidos a tu Google Drive personal con solo pegar una URL. Simple, rápido y seguro.",
+        description: "TERA te permite copiar archivos y carpetas desde drives compartidos a tu Google Drive personal con solo pegar una URL. Simple, rápido y seguro.",
         ctaButton: "Comenzar Ahora"
       },
       features: {
-        title: "¿Por qué elegir Clone Drive?",
+        title: "¿Por qué elegir TERA?",
         subtitle: "Diseñado para hacer que copiar archivos de Google Drive sea tan simple como pegar una URL",
         smartCopy: {
           title: "Copia Inteligente",
@@ -251,7 +251,7 @@ const resources = {
     auth: {
       login: {
         title: "Iniciar Sesión",
-        subtitle: "Accede a tu cuenta de CloneDrive",
+        subtitle: "Accede a tu cuenta de TERA",
         continueWithReplit: "Continuar con Replit",
         orContinueWith: "o continúa con",
         emailLabel: "Correo electrónico",
@@ -265,7 +265,7 @@ const resources = {
       },
       signup: {
         title: "Crear Cuenta",
-        subtitle: "Únete a CloneDrive y comienza a gestionar tus archivos",
+        subtitle: "Únete a TERA y comienza a gestionar tus archivos",
         continueWithReplit: "Registrarse con Replit",
         orCreateAccountWith: "o crear cuenta con",
         nameLabel: "Nombre completo",
@@ -298,7 +298,7 @@ const resources = {
   en: {
     common: {
       app: {
-        title: "Clone Drive",
+        title: "TERA",
         description: "Google Drive file management"
       },
       navigation: {
@@ -360,7 +360,7 @@ const resources = {
         inProgress: "In progress"
       },
       footer: {
-        copyright: "© 2025 CloneDrive. All rights reserved."
+        copyright: "© 2025 TERA. All rights reserved."
       },
       sidebar: {
         recentActivity: "Recent Activity",
@@ -480,11 +480,11 @@ const resources = {
       hero: {
         title: "Copy Google Drive files",
         subtitle: "intelligently",
-        description: "Clone Drive allows you to copy files and folders from shared drives to your personal Google Drive by just pasting a URL. Simple, fast and secure.",
+        description: "TERA allows you to copy files and folders from shared drives to your personal Google Drive by just pasting a URL. Simple, fast and secure.",
         ctaButton: "Get Started"
       },
       features: {
-        title: "Why choose Clone Drive?",
+        title: "Why choose TERA?",
         subtitle: "Designed to make copying Google Drive files as simple as pasting a URL",
         smartCopy: {
           title: "Smart Copy",
@@ -542,7 +542,7 @@ const resources = {
     auth: {
       login: {
         title: "Sign In",
-        subtitle: "Access your CloneDrive account",
+        subtitle: "Access your TERA account",
         continueWithReplit: "Continue with Replit",
         orContinueWith: "or continue with",
         emailLabel: "Email address",
@@ -556,7 +556,7 @@ const resources = {
       },
       signup: {
         title: "Create Account",
-        subtitle: "Join CloneDrive and start managing your files",
+        subtitle: "Join TERA and start managing your files",
         continueWithReplit: "Sign up with Replit",
         orCreateAccountWith: "or create account with",
         nameLabel: "Full name",
