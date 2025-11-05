@@ -71,22 +71,22 @@ export default function Sidebar() {
 
   return (
     <aside 
-      className="group w-[70px] hover:w-[250px] bg-white shadow-[2px_0_5px_rgba(0,0,0,0.05)] overflow-y-auto overflow-x-hidden sticky top-[65px] h-[calc(100vh-65px)] transition-all duration-300 ease-in-out" 
+      className="group w-[70px] hover:w-[250px] bg-[#0061D5] overflow-y-auto overflow-x-hidden sticky top-[65px] h-[calc(100vh-65px)] transition-all duration-300 ease-in-out" 
       data-testid="sidebar-main"
     >
       {/* Navigation Menu */}
-      <nav className="py-6 bg-primary/15">
-        <ul className="space-y-0">
+      <nav className="py-6">
+        <ul className="space-y-1">
           {navItems.map((item) => {
             const isActive = location === item.path;
             return (
               <li key={item.path}>
                 <Link 
                   href={item.path}
-                  className={`flex items-center gap-4 px-6 py-3 cursor-pointer transition-all duration-200 text-muted-foreground ${
+                  className={`flex items-center gap-4 px-6 py-3 cursor-pointer transition-all duration-200 ${
                     isActive 
-                      ? "bg-primary/10 text-primary border-l-3 border-l-primary" 
-                      : "hover:bg-primary/10 hover:text-primary"
+                      ? "bg-[#004A99] text-white" 
+                      : "text-white/90 hover:bg-[#0052B3]"
                   }`}
                   data-testid={`link-nav-${item.path.substring(1) || 'home'}`}
                 >
@@ -104,12 +104,12 @@ export default function Sidebar() {
               <li key={item.path}>
                 <Link 
                   href={item.path}
-                  className={`flex items-center gap-4 px-6 py-3 cursor-pointer transition-all duration-200 text-muted-foreground ${
-                    index === 0 ? 'border-t border-border' : ''
+                  className={`flex items-center gap-4 px-6 py-3 cursor-pointer transition-all duration-200 ${
+                    index === 0 ? 'border-t border-white/20 mt-2 pt-4' : ''
                   } ${
                     isActive 
-                      ? "bg-primary/10 text-primary border-l-3 border-l-primary" 
-                      : "hover:bg-primary/10 hover:text-primary"
+                      ? "bg-[#004A99] text-white" 
+                      : "text-white/90 hover:bg-[#0052B3]"
                   }`}
                   data-testid={`link-nav-admin-${item.path.split('/').pop()}`}
                 >
@@ -123,14 +123,14 @@ export default function Sidebar() {
       </nav>
       
       {/* Storage Status */}
-      <div className="px-6 mt-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        <h3 className="text-[0.9rem] mb-2 text-muted-foreground whitespace-nowrap">{t('sidebar.storage')}</h3>
+      <div className="px-6 mt-auto pb-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <h3 className="text-[0.9rem] mb-2 text-white/80 whitespace-nowrap">{t('sidebar.storage')}</h3>
         <div className="mb-2">
-          <div className="h-[6px] bg-border rounded-full overflow-hidden">
-            <div className="h-full bg-primary rounded-full w-[65%]"></div>
+          <div className="h-[6px] bg-white/20 rounded-full overflow-hidden">
+            <div className="h-full bg-white rounded-full w-[65%]"></div>
           </div>
         </div>
-        <div className="text-[0.8rem] text-muted-foreground whitespace-nowrap">
+        <div className="text-[0.8rem] text-white/70 whitespace-nowrap">
           {t('sidebar.storageUsed', { used: '8.2 GB', total: '15 GB' })}
         </div>
       </div>
